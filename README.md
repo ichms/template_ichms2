@@ -20,6 +20,12 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Code Convention
+
+- 모든 신규 함수는 함수 표현식(`const fn = () => {}` 또는 `const fn = function () {}`)으로 작성한다.
+- 함수 선언식(`function name() {}`)은 지양한다.
+- React 컴포넌트, 이벤트 핸들러, 렌더 헬퍼도 함수 표현식으로 작성한다.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
