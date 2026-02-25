@@ -132,6 +132,10 @@ packages/
 - mutation 성공 시 관련 list/detail invalidate 누락 금지
 - 함수 선언식(`function name() {}`) 지양, 함수 표현식(`const name = () => {}`) 사용
 - React 컴포넌트/훅/핸들러/헬퍼 모두 함수 표현식으로 작성
+- `type.ts`, `types.ts`, `dto.ts`의 타입 선언은 `type`만 사용 (`declaration merging`/모듈 보강 예외)
+- 유니온 타입은 상수(`as const`)를 단일 소스로 두고 파생 타입으로 선언
+- `any` 사용 금지. 불확실 타입은 `unknown`으로 받고 타입 가드/내로잉 수행
+- 도메인 상태값/식별자/코드는 raw `string` 대신 literal union 또는 브랜드 타입 우선 사용
 
 ### Hard Rules (AI용)
 
@@ -150,6 +154,9 @@ packages/
 - `queryKeys.ts` 없이 배열/문자열 key 직접 작성 금지
 - `packages/* -> features/*` import 금지
 - 신규 코드에서 함수 선언식(`function name() {}`) 생성 금지
+- `type.ts`, `types.ts`, `dto.ts`에서 `interface` 생성 금지 (예외: `declaration merging`/모듈 보강)
+- 유니온 타입을 상수 소스 없이 문자열 리터럴로 직접 하드코딩 금지
+- 코드에서 `any` 생성 금지
 
 #### 생성 순서
 
@@ -176,6 +183,8 @@ packages/
 - `index.tsx` 과도 사용 지양 (진입점이 아닌 파일은 명시적 파일명 사용)
 - `common` 승격은 2개 이상 도메인 재사용 + 정책 비의존 확인 후 진행
 - 분리 타이밍은 체감 불편 이전이 아니라 복잡도 지표 충족 시점에 수행
+- `hooks/*`, `components/*`에서는 확장 의도를 명확히 보여야 할 때 `interface`를 우선 사용
+- 단, 유니온/조건부/매핑 타입이 필요한 경우 위치와 무관하게 `type`을 사용
 
 ## 9. import 방향 규칙
 
@@ -254,6 +263,9 @@ packages/
 - import 방향이 허용 규칙을 위반하지 않는가?
 - 함수 스타일이 함수 표현식 기준으로 통일되어 있는가?
 - 분리 수준이 과하거나 부족하지 않은가?
+- `type.ts`, `types.ts`, `dto.ts`에서 `type` 규칙과 예외 규칙을 지켰는가?
+- 유니온 타입이 상수 소스(`as const`)에서 파생되었는가?
+- `any` 없이 `unknown` + 내로잉 규칙을 지켰는가?
 
 ## 14. 예시 코드 설명 (파일 책임 요약)
 
