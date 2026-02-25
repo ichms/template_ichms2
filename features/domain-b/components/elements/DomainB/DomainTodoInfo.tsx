@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useDomainBTodoDetailQuery } from "@/features/domain-b/hooks/queries";
 import type { DomainBTodoId } from "@/features/domain-b/type";
 
@@ -5,7 +6,7 @@ interface DomainTodoInfoProps {
   selectedTodoId: DomainBTodoId | null;
 }
 
-export const DomainTodoInfo = ({ selectedTodoId }: DomainTodoInfoProps) => {
+const DomainTodoInfoComponent = ({ selectedTodoId }: DomainTodoInfoProps) => {
   const detailQuery = useDomainBTodoDetailQuery(selectedTodoId);
 
   return (
@@ -47,3 +48,5 @@ export const DomainTodoInfo = ({ selectedTodoId }: DomainTodoInfoProps) => {
     </article>
   );
 };
+
+export const DomainTodoInfo = memo(DomainTodoInfoComponent);

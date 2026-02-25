@@ -2,54 +2,88 @@
 
 export type DomainBTodoId = string;
 
-export type DomainBTodoStatus = "TODO" | "DONE";
+export const DOMAIN_B_TODO_STATUS = {
+  TODO: "TODO",
+  DONE: "DONE",
+} as const;
 
-export type DomainBTodoFilterStatus = DomainBTodoStatus | "ALL";
+export const DOMAIN_B_TODO_FILTER_STATUS = {
+  ALL: "ALL",
+  TODO: DOMAIN_B_TODO_STATUS.TODO,
+  DONE: DOMAIN_B_TODO_STATUS.DONE,
+} as const;
 
-export interface DomainBTodoItem {
+export const DOMAIN_B_TODO_STATUS_VALUES = [
+  DOMAIN_B_TODO_STATUS.TODO,
+  DOMAIN_B_TODO_STATUS.DONE,
+] as const;
+
+export const DOMAIN_B_TODO_FILTER_STATUS_VALUES = [
+  DOMAIN_B_TODO_FILTER_STATUS.ALL,
+  DOMAIN_B_TODO_FILTER_STATUS.TODO,
+  DOMAIN_B_TODO_FILTER_STATUS.DONE,
+] as const;
+
+export type DomainBTodoStatus =
+  (typeof DOMAIN_B_TODO_STATUS)[keyof typeof DOMAIN_B_TODO_STATUS];
+
+export type DomainBTodoFilterStatus =
+  (typeof DOMAIN_B_TODO_FILTER_STATUS)[keyof typeof DOMAIN_B_TODO_FILTER_STATUS];
+
+export const isDomainBTodoStatus = (value: string): value is DomainBTodoStatus => {
+  return (DOMAIN_B_TODO_STATUS_VALUES as readonly string[]).includes(value);
+};
+
+export const isDomainBTodoFilterStatus = (
+  value: string,
+): value is DomainBTodoFilterStatus => {
+  return (DOMAIN_B_TODO_FILTER_STATUS_VALUES as readonly string[]).includes(value);
+};
+
+export type DomainBTodoItem = {
   id: DomainBTodoId;
   title: string;
   status: DomainBTodoStatus;
   updatedAt: string;
-}
+};
 
-export interface DomainBTodoListParams {
+export type DomainBTodoListParams = {
   search?: string;
   status?: DomainBTodoFilterStatus;
   page?: number;
   pageSize?: number;
-}
+};
 
-export interface DomainBTodoListResult {
+export type DomainBTodoListResult = {
   items: DomainBTodoItem[];
   total: number;
-}
+};
 
-export interface DomainBTodoDetailResult {
+export type DomainBTodoDetailResult = {
   item: DomainBTodoItem;
-}
+};
 
-export interface CreateDomainBTodoInput {
+export type CreateDomainBTodoInput = {
   title: string;
-}
+};
 
-export interface UpdateDomainBTodoStatusInput {
+export type UpdateDomainBTodoStatusInput = {
   id: DomainBTodoId;
   nextStatus: DomainBTodoStatus;
-}
+};
 
-export interface DomainBTodoItemDto {
+export type DomainBTodoItemDto = {
   id: string;
   title: string;
   status: DomainBTodoStatus;
   updated_at: string;
-}
+};
 
-export interface DomainBTodoListDtoResponse {
+export type DomainBTodoListDtoResponse = {
   items: DomainBTodoItemDto[];
   total: number;
-}
+};
 
-export interface DomainBTodoDetailDtoResponse {
+export type DomainBTodoDetailDtoResponse = {
   item: DomainBTodoItemDto;
-}
+};

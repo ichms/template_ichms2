@@ -8,6 +8,7 @@ import type {
   CreateDomainBTodoInput,
   DomainBTodoDetailDtoResponse,
   DomainBTodoDetailResult,
+  DomainBTodoId,
   DomainBTodoItem,
   DomainBTodoItemDto,
   DomainBTodoListDtoResponse,
@@ -27,7 +28,7 @@ export const getDomainBTodoList = async (
 };
 
 export const getDomainBTodoDetail = async (
-  id: string,
+  id: DomainBTodoId,
 ): Promise<DomainBTodoDetailResult> => {
   const response = await http.get<DomainBTodoDetailDtoResponse>(`/domain-b/${id}`);
   return toDomainBTodoDetailResult(response);

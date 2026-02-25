@@ -1,4 +1,8 @@
-import type { DomainBTodoId, DomainBTodoListParams } from "@/features/domain-b/type";
+import {
+  DOMAIN_B_TODO_FILTER_STATUS,
+  type DomainBTodoId,
+  type DomainBTodoListParams,
+} from "@/features/domain-b/type";
 
 // Responsibility: Centralized query key factory for domain-b.
 const DOMAIN_B_ALL_KEY = ["domain-b"] as const;
@@ -6,7 +10,7 @@ const DOMAIN_B_ALL_KEY = ["domain-b"] as const;
 const normalizeListParams = (params: DomainBTodoListParams = {}) => {
   return {
     search: params.search?.trim() ?? "",
-    status: params.status ?? "ALL",
+    status: params.status ?? DOMAIN_B_TODO_FILTER_STATUS.ALL,
     page: params.page ?? 1,
     pageSize: params.pageSize ?? 10,
   };

@@ -1,16 +1,22 @@
-import type{ SubmitEvent, MouseEvent } from "react";
+import { memo, useCallback } from "react";
+import type { SubmitEvent, ChangeEvent } from "react";
 import { useCreateDomainBTodoMutation, useUpdateDomainBTodoStatusMutation } from "@/features/domain-b/hooks/mutations";
 import { useDomainBTodoListQuery } from "@/features/domain-b/hooks/queries";
-import type { DomainBTodoListParams, DomainBTodoStatus } from "@/features/domain-b/type";
+import {
+  DOMAIN_B_TODO_STATUS,
+  type DomainBTodoId,
+  type DomainBTodoListParams,
+  type DomainBTodoStatus,
+} from "@/features/domain-b/type";
 
 interface DomainTodoListProps {
   listParams: DomainBTodoListParams;
   todoTitle: string;
   onChangeTodoTitle: (nextTitle: string) => void;
-  onSelectTodo: (event: MouseEvent<HTMLButtonElement>) => void;
+  onSelectTodo: (todoId: DomainBTodoId) => void;
 }
 
-export const DomainTodoList = ({
+const DomainTodoListComponent = ({
   listParams,
   todoTitle,
   onChangeTodoTitle,
@@ -20,11 +26,13 @@ export const DomainTodoList = ({
   const createTodoMutation = useCreateDomainBTodoMutation();
   const updateStatusMutation = useUpdateDomainBTodoStatusMutation();
 
-  const getNextStatus = (status: DomainBTodoStatus): DomainBTodoStatus => {
-    return status === "TODO" ? "DONE" : "TODO";
-  };
+  const getNextStatus = useCallback((status: DomainBTodoStatus): DomainBTodoStatus => {
+    return status === DOMAIN_B_TODO_STATUS.TODO
+      ? DOMAIN_B_TODO_STATUS.DONE
+      : DOMAIN_B_TODO_STATUS.TODO;
+  }, []);
 
-  const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = useCallback((event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     const normalizedTitle = todoTitle.trim();
     if (!normalizedTitle) {
@@ -39,23 +47,21 @@ export const DomainTodoList = ({
         },
       },
     );
-  };
+  }, [createTodoMutation, onChangeTodoTitle, todoTitle]);
 
-  const handleToggleStatusButtonClick = (
-    event: MouseEvent<HTMLButtonElement>,
+  const handleToggleStatusButtonClick = useCallback((
+    targetId: DomainBTodoId,
+    currentStatus: DomainBTodoStatus,
   ) => {
-    const targetId = event.currentTarget.value;
-    const currentStatus = event.currentTarget.dataset.status;
-
-    if (currentStatus !== "TODO" && currentStatus !== "DONE") {
-      return;
-    }
-
     updateStatusMutation.mutate({
       id: targetId,
       nextStatus: getNextStatus(currentStatus),
     });
-  };
+  }, [getNextStatus, updateStatusMutation]);
+
+  const handleInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    onChangeTodoTitle(event.currentTarget.value);
+  }, [onChangeTodoTitle]);
 
   return (
     <article className="rounded border border-slate-200 p-4">
@@ -65,7 +71,7 @@ export const DomainTodoList = ({
         <input
           type="text"
           value={todoTitle}
-          onChange={(event) => onChangeTodoTitle(event.currentTarget.value)}
+          onChange={handleInputChange}
           placeholder="Add a new to-do"
           className="flex-1 rounded border border-slate-300 px-3 py-2 text-sm"
         />
@@ -90,8 +96,9 @@ export const DomainTodoList = ({
               >
                 <button
                   type="button"
-                  value={item.id}
-                  onClick={onSelectTodo}
+                  onClick={() => {
+                    onSelectTodo(item.id);
+                  }}
                   className="text-left"
                 >
                   <p className="text-sm font-medium">{item.title}</p>
@@ -100,9 +107,9 @@ export const DomainTodoList = ({
 
                 <button
                   type="button"
-                  value={item.id}
-                  data-status={item.status}
-                  onClick={handleToggleStatusButtonClick}
+                  onClick={() => {
+                    handleToggleStatusButtonClick(item.id, item.status);
+                  }}
                   disabled={updateStatusMutation.isPending}
                   className="rounded border border-slate-300 px-2 py-1 text-xs"
                 >
@@ -116,3 +123,5 @@ export const DomainTodoList = ({
     </article>
   );
 };
+
+export const DomainTodoList = memo(DomainTodoListComponent);

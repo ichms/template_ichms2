@@ -1,16 +1,19 @@
-import { useState } from "react";
-import type { MouseEvent } from "react";
-import type { DomainBTodoFilterStatus, DomainBTodoId } from "@/features/domain-b/type";
+import { useCallback, useState } from "react";
 import {
-  DomainB,
-  TodoStatusFilterButtonGroup,
-} from "@/features/domain-b/components/elements";
+  DOMAIN_B_TODO_FILTER_STATUS,
+  type DomainBTodoFilterStatus,
+  type DomainBTodoId,
+} from "@/features/domain-b/type";
+import { DomainB } from "@/features/domain-b/components/elements/DomainB";
+import { TodoStatusFilterButtonGroup } from "@/features/domain-b/components/elements/TodoStatusFilterButtonGroup";
 
 // Responsibility: UI rendering and user interactions for domain-b page.
 const PAGE_SIZE = 8;
 
 const DomainBPage = () => {
-  const [statusFilter, setStatusFilter] = useState<DomainBTodoFilterStatus>("ALL");
+  const [statusFilter, setStatusFilter] = useState<DomainBTodoFilterStatus>(
+    DOMAIN_B_TODO_FILTER_STATUS.ALL,
+  );
   const [todoTitle, setTodoTitle] = useState("");
   const [selectedTodoId, setSelectedTodoId] = useState<DomainBTodoId | null>(null);
 
@@ -20,17 +23,17 @@ const DomainBPage = () => {
     status: statusFilter,
   };
 
-  const handleStatusFilterButtonClick = (
-    event: MouseEvent<HTMLButtonElement>,
-  ) => {
-    const nextFilter = event.currentTarget.value as DomainBTodoFilterStatus;
+  const handleStatusFilterButtonClick = useCallback((nextFilter: DomainBTodoFilterStatus) => {
     setStatusFilter(nextFilter);
-  };
+  }, []);
 
-  const handleSelectTodoButtonClick = (event: MouseEvent<HTMLButtonElement>) => {
-    const nextSelectedTodoId = event.currentTarget.value;
+  const handleSelectTodoButtonClick = useCallback((nextSelectedTodoId: DomainBTodoId) => {
     setSelectedTodoId(nextSelectedTodoId);
-  };
+  }, []);
+
+  const handleTodoTitleChange = useCallback((nextTitle: string) => {
+    setTodoTitle(nextTitle);
+  }, []);
 
   return (
     <section className="mx-auto max-w-5xl space-y-6 p-6">
@@ -50,7 +53,7 @@ const DomainBPage = () => {
         listParams={listParams}
         todoTitle={todoTitle}
         selectedTodoId={selectedTodoId}
-        onChangeTodoTitle={setTodoTitle}
+        onChangeTodoTitle={handleTodoTitleChange}
         onSelectTodo={handleSelectTodoButtonClick}
       />
     </section>

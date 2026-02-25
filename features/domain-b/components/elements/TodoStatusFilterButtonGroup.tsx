@@ -1,14 +1,17 @@
-import type { MouseEvent } from "react";
-import type { DomainBTodoFilterStatus } from "@/features/domain-b/type";
+import { memo } from "react";
+import {
+  DOMAIN_B_TODO_FILTER_STATUS_VALUES,
+  type DomainBTodoFilterStatus,
+} from "@/features/domain-b/type";
 
 interface TodoStatusFilterButtonGroupProps {
   statusFilter: DomainBTodoFilterStatus;
-  onClick: (event: MouseEvent<HTMLButtonElement>) => void;
+  onClick: (status: DomainBTodoFilterStatus) => void;
 }
 
-const FILTERS: DomainBTodoFilterStatus[] = ["ALL", "TODO", "DONE"];
+const FILTERS = DOMAIN_B_TODO_FILTER_STATUS_VALUES;
 
-export const TodoStatusFilterButtonGroup = ({
+const TodoStatusFilterButtonGroupComponent = ({
   statusFilter,
   onClick,
 }: TodoStatusFilterButtonGroupProps) => {
@@ -20,8 +23,9 @@ export const TodoStatusFilterButtonGroup = ({
           <button
             key={status}
             type="button"
-            value={status}
-            onClick={onClick}
+            onClick={() => {
+              onClick(status);
+            }}
             className={`rounded border px-3 py-1 text-sm ${
               isActive
                 ? "border-slate-900 bg-slate-900 text-white"
@@ -35,3 +39,5 @@ export const TodoStatusFilterButtonGroup = ({
     </div>
   );
 };
+
+export const TodoStatusFilterButtonGroup = memo(TodoStatusFilterButtonGroupComponent);

@@ -1,4 +1,4 @@
-import type { MouseEvent } from "react";
+import { memo } from "react";
 import type { DomainBTodoId, DomainBTodoListParams } from "@/features/domain-b/type";
 import { DomainTodoInfo } from "@/features/domain-b/components/elements/DomainB/DomainTodoInfo";
 import { DomainTodoList } from "@/features/domain-b/components/elements/DomainB/DomainTodoList";
@@ -8,10 +8,10 @@ interface DomainBProps {
   todoTitle: string;
   selectedTodoId: DomainBTodoId | null;
   onChangeTodoTitle: (nextTitle: string) => void;
-  onSelectTodo: (event: MouseEvent<HTMLButtonElement>) => void;
+  onSelectTodo: (todoId: DomainBTodoId) => void;
 }
 
-export const DomainB = ({
+const DomainBComponent = ({
   listParams,
   todoTitle,
   selectedTodoId,
@@ -30,3 +30,5 @@ export const DomainB = ({
     </div>
   );
 };
+
+export const DomainB = memo(DomainBComponent);
