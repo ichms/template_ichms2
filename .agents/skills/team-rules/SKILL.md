@@ -130,12 +130,15 @@ packages/
 - `app/*/page.tsx`에 과도한 비즈니스 로직 금지
 - `packages/*`에서 `features/*` import 금지
 - mutation 성공 시 관련 list/detail invalidate 누락 금지
-- 함수 선언식(`function name() {}`) 지양, 함수 표현식(`const name = () => {}`) 사용
-- React 컴포넌트/훅/핸들러/헬퍼 모두 함수 표현식으로 작성
-- `type.ts`, `types.ts`, `dto.ts`의 타입 선언은 `type`만 사용 (`declaration merging`/모듈 보강 예외)
+- 신규 코드에서 함수 선언식(`function name() {}`) 금지, 함수 표현식(`const name = () => {}`) 사용
+- React 컴포넌트/훅/핸들러/헬퍼는 함수 표현식으로 작성
+- `type.ts`, `types.ts`, `dto.ts`에서 타입 선언은 `type`만 사용
+- 단, 유니온 파생용 상수(`as const`) 값 선언은 같은 파일에서 허용
+- `declaration merging`/모듈 보강이 필요한 경우에만 `interface` 예외 허용
 - 유니온 타입은 상수(`as const`)를 단일 소스로 두고 파생 타입으로 선언
 - `any` 사용 금지. 불확실 타입은 `unknown`으로 받고 타입 가드/내로잉 수행
-- 도메인 상태값/식별자/코드는 raw `string` 대신 literal union 또는 브랜드 타입 우선 사용
+- 도메인 상태값/식별자/코드값은 raw `string` 대신 literal union 또는 브랜드 타입 우선 사용
+- 일반 텍스트 필드(`title`, `description`, `search`)는 `string` 사용 허용
 
 ### Hard Rules (AI용)
 
@@ -185,6 +188,27 @@ packages/
 - 분리 타이밍은 체감 불편 이전이 아니라 복잡도 지표 충족 시점에 수행
 - `hooks/*`, `components/*`에서는 확장 의도를 명확히 보여야 할 때 `interface`를 우선 사용
 - 단, 유니온/조건부/매핑 타입이 필요한 경우 위치와 무관하게 `type`을 사용
+- 단일 컴포넌트에 서로 다른 UI 책임(입력/필터/목록/상세/요약 등)이 공존할 수 있으나, 아래 조건 중 하나라도 충족하면 책임 단위로 분리
+- 특정 상태 변경이 무관한 UI 영역까지 불필요한 재렌더링을 유발하는 경우 (React DevTools Profiler로 확인)
+- 분기/검증/이벤트 로직 증가로 컴포넌트 가독성과 변경 안정성이 떨어지는 경우
+- 하위 영역의 재사용 가능성이 생긴 경우
+- 단일 컴포넌트가 180줄 이상이거나 조건 분기가 5개 이상으로 증가한 경우
+- 분리 후 상위는 데이터 흐름 조합, 하위는 UI 표현/입력 처리에 집중
+- props는 DOM 이벤트 객체보다 도메인 값(`id`, `status`, `filter`) 중심 전달을 우선
+
+### 규칙 충돌/예외 처리
+
+- 충돌 시 우선순위: 런타임 안전성 > 아키텍처 규칙 > 스타일 규칙
+- Hard Rule 예외는 PR 설명에 사유, 범위, 만료 조건을 명시
+- `eslint-disable`는 라인 단위 최소 범위로만 허용하고 사유 주석 필수
+
+### 규칙-검증 매핑 (도입 권장)
+
+- `any` 금지: `@typescript-eslint/no-explicit-any`
+- import 경계: `no-restricted-imports` 또는 `eslint-plugin-boundaries`
+- query key 하드코딩 금지: 커스텀 ESLint 룰 또는 코드리뷰 체크리스트 강제
+- 함수 스타일 통일: `func-style` + 코드리뷰 체크리스트
+- 문서 규칙은 가능한 항목부터 린트/PR 템플릿으로 자동 검증
 
 ## 9. import 방향 규칙
 
@@ -254,6 +278,8 @@ packages/
 
 ## 13. 코드 리뷰 체크리스트
 
+### Hard Checklist (Pass/Fail)
+
 - `app/*/page.tsx`가 엔트리 역할만 수행하는가?
 - `service.ts`가 순수 API 함수만 포함하는가?
 - query key가 `queryKeys.ts` factory를 통해서만 사용되는가?
@@ -262,10 +288,14 @@ packages/
 - `features/common`이 도메인 비의존성을 지키는가?
 - import 방향이 허용 규칙을 위반하지 않는가?
 - 함수 스타일이 함수 표현식 기준으로 통일되어 있는가?
-- 분리 수준이 과하거나 부족하지 않은가?
 - `type.ts`, `types.ts`, `dto.ts`에서 `type` 규칙과 예외 규칙을 지켰는가?
 - 유니온 타입이 상수 소스(`as const`)에서 파생되었는가?
 - `any` 없이 `unknown` + 내로잉 규칙을 지켰는가?
+
+### Soft Checklist (Review Comment)
+
+- 분리 수준이 과하거나 부족하지 않은가?
+- 컴포넌트 책임 분리 기준(재렌더 영향/복잡도/재사용성/파일 크기)을 충족하는가?
 
 ## 14. 예시 코드 설명 (파일 책임 요약)
 
