@@ -53,7 +53,7 @@ function TodoPanel() {
 **Correct (split by responsibility, pass domain values):**
 
 ```tsx
-type TodoCreateFormProps = {
+interface TodoCreateFormProps {
   title: string
   onChangeTitle: (nextTitle: string) => void
   onSubmit: () => void
@@ -77,7 +77,7 @@ const TodoCreateForm = ({ title, onChangeTitle, onSubmit, isSubmitting }: TodoCr
   )
 }
 
-type TodoListProps = {
+interface TodoListProps  {
   items: Array<{ id: string; title: string }>
   onSelectTodo: (todoId: string) => void
 }
