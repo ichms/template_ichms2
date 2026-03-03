@@ -1,8 +1,5 @@
 # REACT-01 React Component Practices Examples
 
-- Priority: P1
-- 적용 범위: `features/*`의 React 컴포넌트/훅 (`.tsx`, `.jsx`)
-
 ## 예시 코드 (맥락별 Bad/Good)
 
 ### 1) 파생 상태: Effect로 계산하지 않는다
