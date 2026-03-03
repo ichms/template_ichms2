@@ -14,7 +14,7 @@
 
 - 공통 요소는 `features/common`으로 모은다.
 - 초기에는 단순 구조로 시작하고 복잡도 증가 시 분리한다.
-- SEO/SSR 성능상 필요한 경우에만 `app/*`에서 read-only fetch를 예외 허용한다.
+- SEO/SSR 성능상 필요한 경우 app/*에서 read-only fetch를 허용하되, 데이터 호출 함수는 features/domain-*/service.ts를 통해서만 사용한다.
 
 ## MUST NOT
 

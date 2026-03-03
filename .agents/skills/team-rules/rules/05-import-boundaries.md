@@ -20,6 +20,7 @@
 - `packages/* -> features/*`
 - `features/common -> features/domain-*`
 - `app/* -> service.ts` 직접 참조
+- `app/*`에서 fetch 구현 세부 로직을 직접 작성하지 않는다. read-only fetch가 필요한 경우에도 features/domain-*/service.ts 경유 호출만 허용한다.
 
 ## 왜 필요한가
 
@@ -45,8 +46,10 @@ export const http = {
 
 - 금지 방향 import가 없는가?
 - `app/*`가 Page 컴포넌트를 통해 진입하는가?
+- `app/*` 내 fetch 호출이 공용 진입점(`features/*/server.ts`)인지 확인
 
 ## 자동 검증
 
 - 린트: 가능(`no-restricted-imports`, `eslint-plugin-boundaries`)
+- 린트: `app/*`에서 `service.ts`/`http client` 직접 import 제한
 - 리뷰 수동: 보조
