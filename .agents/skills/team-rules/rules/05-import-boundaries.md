@@ -46,7 +46,7 @@ export const http = {
 
 - 금지 방향 import가 없는가?
 - `app/*`가 Page 컴포넌트를 통해 진입하는가?
-- `app/*` 내 fetch 호출이 공용 진입점(`features/*/server.ts`)인지 확인
+- `app/*` 내 fetch 호출이 공용 진입점(`features/*/service.ts`)인지 확인
 
 ## 자동 검증
 
