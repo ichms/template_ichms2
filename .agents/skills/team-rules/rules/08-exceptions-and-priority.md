@@ -9,7 +9,9 @@
   1. 런타임 안전성
   2. 아키텍처 규칙
   3. 스타일 규칙
-- Hard Rule 예외는 PR에 사유/범위/만료조건을 기록한다.
+- Hard Rule 예외는 PR에 예외는 승인자/작성자/만료일을 필수로 기록한다.
+- Hard Rule 예외는 PR에 Owner, Approver, Expiry를 포함해야 하며, 정보 누락 시 예외를 무효로 본다.
+- 만료일 도달 시 갱신 또는 제거 중 하나를 반드시 수행한다.
 
 ## MUST NOT
 
@@ -29,8 +31,10 @@
 ```md
 ### Rule Exception
 - Rule ID: IMP-01
+- Owner: @코드_작성자_깃헙_계정
+- Approver: @리뷰자__깃헙_계정
 - Reason: 외부 SDK 구조 제약
-- Scope: /features/domain-a/service.ts line 21
+- Scope: /features/domain-a/service.ts:21
 - Expiry: 2026-04-30
 - Follow-up: SDK wrapper 도입 후 제거
 ```
