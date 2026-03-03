@@ -7,13 +7,15 @@
 
 - Hard 체크리스트를 Pass/Fail로 먼저 판단한다.
 - 자동화 가능한 항목은 린트 규칙으로 우선 이관한다.
+- P0 항목 위반은 예외 승인 없이는 CI fail로 차단한다.
+- P1 항목은 경고 + 리뷰 코멘트, P2 항목은 개선 권고로 처리한다.
 
 ## 권장 린트 매핑
 
-- `any` 금지: `@typescript-eslint/no-explicit-any`
-- import 경계: `no-restricted-imports` 또는 `eslint-plugin-boundaries`
-- 함수 스타일: `func-style`
-- query key 하드코딩 금지: 커스텀 ESLint 룰 또는 리뷰 템플릿 체크
+- `any` 금지: `@typescript-eslint/no-explicit-any` (error)
+- import 경계: `no-restricted-imports`/`boundaries` (error)
+- hooks deps: `react-hooks/exhaustive-deps` (error)
+- query key 하드코딩: custom lint 또는 PR bot check (error)
 
 ## Hard Checklist (Pass/Fail)
 
@@ -38,5 +40,5 @@
 
 ## 자동 검증
 
-- 린트: 강하게 권장
+- 린트/CI: P0 항목 필수 차단, P1/P2 항목은 경고 또는 리뷰 보조
 - 리뷰 수동: 필수
