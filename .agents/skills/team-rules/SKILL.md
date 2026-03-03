@@ -124,11 +124,15 @@ packages/
 ### Hard Rules (사람용)
 
 - `service.ts`에 `useQuery`, `useMutation`, `useQueryClient` 사용 금지
+- `components/*`에서 `service.ts` 직접 import 금지 (반드시 `hooks/*`를 통해 호출)
 - `features/common`에서 도메인(`features/domain-*`) import 금지
 - query key 하드코딩 금지 (`queryKeys.ts`만 사용)
 - 서버 상태를 store에 중복 저장 금지
 - `app/*/page.tsx`에 과도한 비즈니스 로직 금지
 - `packages/*`에서 `features/*` import 금지
+- `packages/*`는 애플리케이션의 정책/화면 흐름/사용자 행위에 간섭하지 않는다
+- `packages/*`는 signal/callback/event만 제공하고, 정책성 side effect(redirect/logout/toast/모달 오픈 등) 실행 금지
+- 공통 이벤트(예: 인증 실패 `401`)의 실제 행위는 `app/*` 또는 `features/*`에서 handler 주입으로 처리
 - mutation 성공 시 관련 list/detail invalidate 누락 금지
 - 신규 코드에서 함수 선언식(`function name() {}`) 금지, 함수 표현식(`const name = () => {}`) 사용
 - React 컴포넌트/훅/핸들러/헬퍼는 함수 표현식으로 작성
@@ -154,8 +158,12 @@ packages/
 #### 금지 패턴
 
 - `service.ts`에 React Query import 금지
+- `components/*`에서 `service.ts` 직접 import하는 코드 생성 금지 (반드시 `hooks/*` 경유)
 - `queryKeys.ts` 없이 배열/문자열 key 직접 작성 금지
 - `packages/* -> features/*` import 금지
+- `packages/*`에서 앱 정책/화면 흐름/사용자 행위를 직접 결정하거나 실행하는 코드 생성 금지
+- `packages/*`에서 라우팅 상수(`PATH` 등) 직접 참조 및 redirect 실행 금지
+- `packages/*`에서 공통 이벤트(예: `401`)는 signal emit만 수행하고, 행위는 `app/features` handler에서 처리
 - 신규 코드에서 함수 선언식(`function name() {}`) 생성 금지
 - `type.ts`, `types.ts`, `dto.ts`에서 `interface` 생성 금지 (예외: `declaration merging`/모듈 보강)
 - 유니온 타입을 상수 소스 없이 문자열 리터럴로 직접 하드코딩 금지
@@ -282,6 +290,7 @@ packages/
 
 - `app/*/page.tsx`가 엔트리 역할만 수행하는가?
 - `service.ts`가 순수 API 함수만 포함하는가?
+- `components/*`가 `service.ts`를 직접 참조하지 않고 `hooks/*`를 통해 데이터/행위를 사용하는가?
 - query key가 `queryKeys.ts` factory를 통해서만 사용되는가?
 - mutation 성공 시 필요한 invalidate가 정확히 포함되는가?
 - 서버 상태를 store로 복제하지 않았는가?
