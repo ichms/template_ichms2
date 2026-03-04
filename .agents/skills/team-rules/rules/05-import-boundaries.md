@@ -1,12 +1,19 @@
 # IMP-01 Import Boundaries
 
 - Priority: P0
+- Enforcement: `HR-IMP-01,02,03` Hard Gate (`GOV-02` Enforcement Matrix 기준)
 - 적용 범위: 전체 코드베이스
+
+## SSOT 적용
+
+- 강제 문구 원문/집행 강도는 `GOV-02`를 따른다.
+- 본 문서는 `HR-IMP-01,02,03`의 경계 해설과 리뷰 기준을 제공한다.
 
 ## MUST
 
 - 허용 방향만 사용한다.
-- `app/*`는 `components/Page.tsx`를 통해 도메인에 진입한다.
+- `app/*`는 기본적으로 `components/Page.tsx`를 통해 도메인에 진입한다.
+- `app/*` read-only 조회가 필요한 경우 `features/domain-*/service.ts` 공개 함수만 허용한다.
 
 ## 허용 방향
 
@@ -19,8 +26,8 @@
 
 - `packages/* -> features/*`
 - `features/common -> features/domain-*`
-- `app/* -> service.ts` 직접 참조
-- `app/*`에서 fetch 구현 세부 로직을 직접 작성하지 않는다. read-only fetch가 필요한 경우에도 features/domain-*/service.ts 경유 호출만 허용한다.
+- `app/*`에서 read-only 공개 함수(`get*ForPage`) 외 `service.ts` 함수를 직접 참조
+- `app/*`에서 fetch 구현 세부 로직을 직접 작성하지 않는다.
 
 ## 왜 필요한가
 
@@ -28,28 +35,64 @@
 
 ## Bad
 
-```ts
-// packages/http/order.ts
-import { orderKeys } from '@/features/domain-orders/queryKeys';
+```tsx
+// app/orders/page.tsx
+import { useQuery } from '@tanstack/react-query';
+import { getOrders } from '@/features/domain-orders/service';
+
+const Page = () => {
+  const { data } = useQuery({
+    queryKey: ['orders'],
+    queryFn: () => getOrders({}),
+  });
+
+  return <OrderList items={data?.items ?? []} />;
+};
+
+export default Page;
 ```
 
 ## Good
 
-```ts
-// packages/http/index.ts
-export const http = {
-  get: async (path: string, init?: RequestInit) => fetch(path, init),
+```tsx
+// features/domain-orders/hooks/queries.ts
+import { useQuery } from '@tanstack/react-query';
+import { orderKeys } from '@/features/domain-orders/queryKeys';
+import { getOrders } from '@/features/domain-orders/service';
+
+export const useOrdersQuery = (params: { status?: string }) => {
+  return useQuery({
+    queryKey: orderKeys.list(params),
+    queryFn: () => getOrders(params),
+  });
 };
+```
+
+## MUST 검증 메타
+
+| Rule ID | 자동 검증 | 수동 검증 체크포인트 |
+| --- | --- | --- |
+| `HR-IMP-01` | `boundaries`/`no-restricted-imports` | `packages/* -> features/*` 예외 사유 |
+| `HR-IMP-02` | `boundaries`/`no-restricted-imports` | `features/common -> features/domain-*` 위반 여부 |
+| `HR-IMP-03` | import 제한 규칙 | `app/*`의 `service.ts` 사용이 `get*ForPage`인지 |
+
+```tsx
+// app/orders/page.tsx
+import { OrdersPage } from '@/features/domain-orders/components/Page';
+
+const Page = () => <OrdersPage />;
+
+export default Page;
 ```
 
 ## 리뷰 체크 (Yes/No)
 
 - 금지 방향 import가 없는가?
-- `app/*`가 Page 컴포넌트를 통해 진입하는가?
-- `app/*` 내 fetch 호출이 공용 진입점(`features/*/service.ts`)인지 확인
+- `app/*`의 read-only 호출이 `service.ts` 공개 함수 경유인가?
+- `app/*`에서 read-only 공개 함수(`get*ForPage`) 외 `service.ts` import가 없는가?
 
 ## 자동 검증
 
 - 린트: 가능(`no-restricted-imports`, `eslint-plugin-boundaries`)
-- 린트: `app/*`에서 `service.ts`/`http client` 직접 import 제한
+- 린트: `app/*`에서 `http client` 직접 import 제한
 - 리뷰 수동: 보조

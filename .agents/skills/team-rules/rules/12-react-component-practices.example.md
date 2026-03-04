@@ -1,5 +1,27 @@
 # REACT-01 React Component Practices Examples
 
+이 문서는 사람 참고용 예시 모음이다. 실행형 지시 문서가 아니다.
+
+## 문서 타입
+
+- Type: Reference-only
+- Execution: disabled
+- Execution Source: `30-ai/*` only
+- AI 프롬프트에는 필요한 섹션만 발췌해 사용한다.
+
+## Rule Mapping
+
+- 섹션 1, 3: `HR-REACT-01`
+- 섹션 2: `HR-REACT-02`
+- 섹션 4, 5: 의존성 안정화 가이드(`SR-REACT-01`)
+- 섹션 6, 7: 부모-자식 네이밍 계약(`SR-REACT-01`)
+
+## 타입 표기 기준
+
+- `type.ts|types.ts|dto.ts`는 `type` 기본
+- `components/*`, `hooks/*`의 Props/계약 타입은 `type`/`interface` 모두 허용
+- 상속 관계 표현이 필요할 때는 `interface ... extends ...`를 우선 고려
+
 ## 예시 코드 (맥락별 Bad/Good)
 
 ### 1) 파생 상태: Effect로 계산하지 않는다

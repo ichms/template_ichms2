@@ -1,7 +1,13 @@
 # RQ-01 TanStack Query Rules
 
 - Priority: P0
+- Enforcement: Rule ID별 상이 (`GOV-02` Enforcement Matrix 참조)
 - 적용 범위: `features/domain-*/service.ts`, `hooks/*`, `queryKeys.ts`
+
+## SSOT 적용
+
+- 강제 문구 원문/집행 강도는 `GOV-02`를 따른다.
+- 본 문서는 `HR-RQ-01,02,03`, `HR-STATE-01`의 해설/예시/리뷰 기준만 제공한다.
 
 ## MUST
 
@@ -15,11 +21,21 @@
 - 조건부 query는 `enabled`로 제어한다.
 - 화면은 loading/error 상태를 반드시 처리한다.
 
+## MUST 검증 메타
+
+| Rule ID | 자동 검증 | 수동 검증 체크포인트 |
+| --- | --- | --- |
+| `HR-RQ-01` | custom lint / PR bot | `queryKeys.ts` factory만 사용하는지 |
+| `HR-RQ-02` | `service.ts` import rule | React Query 훅 import 유무 |
+| `HR-RQ-03` | 정적 분석 보조(제한) | mutation 성공 경로별 invalidate 누락 여부 |
+| `HR-STATE-01` | 패턴 탐지(제한) | 서버 상태 store/local 중복 저장 여부 |
+
 ## SHOULD
 
 - key 구조를 `all > lists > list`, `all > details > detail`로 유지한다.
 - key 파라미터는 정규화 객체로 전달한다.
 - prefetch/optimistic update는 사용자 체감 성능이 필요한 화면에서 사용한다.
+- `app/*` read-only 조회가 필요한 경우 `service.ts`의 공개 조회 함수(`get*ForPage`)를 사용한다.
 
 ## MUST NOT
 
@@ -33,96 +49,18 @@
 
 캐시 정책 누락과 잘못된 invalidate를 구조적으로 차단하려면 파일 책임을 고정해야 한다.
 
-## Bad
+## 표준 파일 책임
 
-```ts
-// features/domain-orders/service.ts
-import { useQueryClient } from '@tanstack/react-query';
+- `queryKeys.ts`: key factory
+- `service.ts`: API I/O + app read-only 공개 조회 함수(`get*ForPage`, 선택)
+- `hooks/queries.ts`: query hook
+- `hooks/mutations.ts`: mutation hook
 
-export const updateOrder = async (id: string) => {
-  const qc = useQueryClient();
-  await http.patch(`/orders/${id}`);
-  qc.invalidateQueries({ queryKey: ['orders'] });
-};
-```
+## queryKeys.ts 파일 위치
 
-## Good
-
-```ts
-// features/domain-orders/queryKeys.ts
-export const orderKeys = {
-  all: ['orders'] as const,
-  lists: () => [...orderKeys.all, 'lists'] as const,
-  list: (params: { status?: string }) => [...orderKeys.lists(), params] as const,
-  details: () => [...orderKeys.all, 'details'] as const,
-  detail: (id: string) => [...orderKeys.details(), id] as const,
-};
-```
-
-```ts
-// features/domain-orders/service.ts
-export const getOrders = async (params: { status?: string }) =>
-  http.get('/orders', { searchParams: params });
-
-export const patchOrderStatus = async (id: string, status: string) =>
-  http.patch(`/orders/${id}`, { json: { status } });
-```
-
-```ts
-// features/domain-orders/hooks/queries.ts
-import { useQuery } from '@tanstack/react-query';
-
-export const useOrdersQuery = (params: { status?: string }) => {
-  return useQuery({
-    queryKey: orderKeys.list(params),
-    queryFn: () => getOrders(params),
-    enabled: true,
-  });
-};
-```
-
-```ts
-// features/domain-orders/hooks/mutations.ts
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-
-export const usePatchOrderStatusMutation = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, status }: { id: string; status: string }) =>
-      patchOrderStatus(id, status),
-    onSuccess: (_data, { id }) => {
-      queryClient.invalidateQueries({ queryKey: orderKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: orderKeys.detail(id) });
-    },
-  });
-};
-```
-
-```tsx
-// features/domain-orders/components/Page.tsx
-const OrdersPage = () => {
-  const { data, isPending, isError, error } = useOrdersQuery({});
-
-  if (isPending) return <div>Loading...</div>;
-  if (isError) return <div>{error.message}</div>;
-
-  return <OrderList items={data.items} />;
-};
-```
-
-## 성능/운영 패턴
-
-- hover/진입 전 prefetch가 필요한 화면은 `queryClient.prefetchQuery`를 사용한다.
-- 낙관적 업데이트는 `onMutate -> onError rollback -> onSettled invalidate` 순서를 지킨다.
-- 글로벌 에러 핸들링은 `QueryClient` 기본 옵션에서 일관되게 처리한다.
-
-## 안티패턴
-
-- `queryKey: ['orders']` 같은 하드코딩 key를 컴포넌트에 직접 작성
-- mutation 성공 후 invalidate 누락
-- 상세 변경 후 목록만 invalidate 하고 `detail(id)` 누락
-- 서버 응답을 store로 복제해 Query cache와 이중 소스로 운영
+- 기본 위치: `features/domain-*/queryKeys.ts`
+- 예시: `features/domain-orders/queryKeys.ts`
+- 규칙: 도메인별로 1개 파일을 기본으로 두고, 하위 폴더 분리는 key 개수가 많아질 때만 적용한다.
 
 ## 리뷰 체크 (Yes/No)
 
@@ -130,7 +68,7 @@ const OrdersPage = () => {
 - Mutation 성공 시 필요한 invalidate가 최소 범위로 포함되는가?
 - `service.ts`가 훅 없이 순수 API 함수만 포함하는가?
 - 서버 상태를 Query cache 단일 소스로 유지하는가?
-- 조건부 query에서 `enabled`를 사용하고 loading/error 처리를 했는가?
+- `app/*` read-only 조회가 필요할 때 `service.ts` 공개 함수(`get*ForPage`) 경유인가?
 
 ## 자동 검증
 

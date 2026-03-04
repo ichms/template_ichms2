@@ -1,48 +1,28 @@
-# AI-01 Hard Rules for AI Generation
+# AI-01 Hard Rules for AI Generation (Deprecated Redirect)
 
 - Priority: P0
-- 적용 범위: AI가 생성하는 신규/수정 코드 전체
+- 적용 범위: AI가 생성/수정하는 코드 전체
+
+이 문서는 하위 호환용 진입점이다. 실행형 AI 규칙의 단일 기준은 `AI-OPS-01`이다.
+
+- Execution Source: `30-ai/*` only
 
 ## MUST
 
-- 생성 순서를 지킨다: `type.ts -> queryKeys.ts -> service.ts -> hooks/* -> components/Page.tsx -> app/*/page.tsx`
-- 신규 함수는 모두 함수 표현식(`const fn = () => {}`)으로 생성한다.
-- 파일 책임을 분리해 생성한다.
+- AI 규칙은 `AI-OPS-01`을 우선 적용한다.
+- Hard Rule 예외가 필요하면 `EX-01` 템플릿 초안을 함께 제시한다.
+
+## MUST 검증 메타
+
+| Rule ID | 자동 검증 | 수동 검증 체크포인트 |
+| --- | --- | --- |
+| `AI-01` | 없음 | 결과물이 `AI-OPS-01` MUST/MUST NOT을 만족하는지 |
 
 ## MUST NOT
 
-- `service.ts`에 React Query import를 생성하지 않는다.
-- `queryKeys.ts` 없이 key를 직접 생성하지 않는다.
-- `packages/* -> features/*` import를 생성하지 않는다.
-- `type.ts|types.ts|dto.ts`에 `interface`를 생성하지 않는다(예외 제외).
-- `any`를 생성하지 않는다.
-
-## 왜 필요한가
-
-AI 산출물 편차가 크면 리뷰 비용이 급증한다. 생성 규칙을 강제하면 팀이 같은 구조를 반복적으로 얻을 수 있다.
-
-## Bad
-
-```ts
-function useOrders() {
-  return useQuery({ queryKey: ['orders'], queryFn: getOrders });
-}
-```
-
-## Good
-
-```ts
-export const useOrdersQuery = () => {
-  return useQuery({ queryKey: orderKeys.list({}), queryFn: () => getOrders({}) });
-};
-```
+- 이 문서에 독립 규칙을 추가해 SSOT와 중복 정의하지 않는다.
 
 ## 리뷰 체크 (Yes/No)
 
-- AI가 생성한 파일이 지정 순서를 따랐는가?
-- 금지 패턴이 없는가?
-
-## 자동 검증
-
-- 린트: 부분 가능
-- 리뷰 수동: 필수
+- 결과물이 `AI-OPS-01`의 MUST/MUST NOT을 만족하는가?
+- 예외가 필요한 경우 Rule ID + Owner + Approver + Expiry를 포함했는가?

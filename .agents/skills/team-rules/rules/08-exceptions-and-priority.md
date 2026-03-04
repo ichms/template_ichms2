@@ -1,6 +1,7 @@
 # EX-01 Exceptions and Rule Priority
 
 - Priority: P1
+- Enforcement: Hard Gate (예외 기록 누락 시)
 - 적용 범위: 모든 예외 상황
 
 ## MUST
@@ -8,10 +9,17 @@
 - 규칙 충돌 시 우선순위를 적용한다.
   1. 런타임 안전성
   2. 아키텍처 규칙
-  3. 스타일 규칙
-- Hard Rule 예외는 PR에 예외는 승인자/작성자/만료일을 필수로 기록한다.
-- Hard Rule 예외는 PR에 Owner, Approver, Expiry를 포함해야 하며, 정보 누락 시 예외를 무효로 본다.
-- 만료일 도달 시 갱신 또는 제거 중 하나를 반드시 수행한다.
+  3. 데이터 정합성
+  4. 스타일 규칙
+- Hard Rule 예외는 PR에 `Owner`, `Approver`, `Expiry`를 필수로 기록한다.
+- 만료일 도달 시 7일 내 `갱신` 또는 `제거`를 수행한다.
+- 정보 누락 예외는 무효로 본다.
+
+## MUST 검증 메타
+
+| Rule ID | 자동 검증 | 수동 검증 체크포인트 |
+| --- | --- | --- |
+| `EX-01` | 일부 가능(만료일 포맷/존재) | Owner/Approver/Scope/Expiry 완전성, 만료 대응 여부 |
 
 ## MUST NOT
 
@@ -21,6 +29,12 @@
 ## SHOULD
 
 - `eslint-disable`는 라인 단위 최소 범위만 허용한다.
+- 예외 기간은 30일 이내를 기본으로 한다(초과 시 재승인 필요).
+
+## Approver 권한 기준
+
+- P0/P1 Hard Rule 예외: Tech Lead 이상 승인
+- P2 Hard Gate 예외: 도메인 오너 승인
 
 ## 왜 필요한가
 
@@ -31,8 +45,8 @@
 ```md
 ### Rule Exception
 - Rule ID: IMP-01
-- Owner: @코드_작성자_깃헙_계정
-- Approver: @리뷰자__깃헙_계정
+- Owner: @작업자_깃헙_계정
+- Approver: @리뷰어_깃헙_계정
 - Reason: 외부 SDK 구조 제약
 - Scope: /features/domain-a/service.ts:21
 - Expiry: 2026-04-30
@@ -41,7 +55,8 @@
 
 ## 리뷰 체크 (Yes/No)
 
-- 예외 기록에 사유/범위/만료조건이 모두 있는가?
+- 예외 기록에 Rule ID/Owner/Approver/Reason/Scope/Expiry가 모두 있는가?
+- 만료된 예외가 방치되지 않았는가?
 - disable 범위가 최소인가?
 
 ## 자동 검증
