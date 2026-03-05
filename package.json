@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "lint:rules": "node scripts/check-query-keys.mjs",
-    "ci:check": "pnpm lint && pnpm typecheck && pnpm lint:rules"
+    "ci:check": "pnpm lint && pnpm typecheck && pnpm lint:rules",
+    "prepare": "husky"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.21",
@@ -24,6 +25,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "husky": "^9.1.7",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
