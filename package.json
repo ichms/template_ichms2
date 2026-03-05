@@ -16,7 +16,8 @@
     "@tanstack/react-query": "^5.90.21",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.4.3",
@@ -29,6 +30,7 @@
     "eslint-config-next": "16.1.6",
     "husky": "^9.1.7",
     "msw": "^2.12.10",
+    "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
