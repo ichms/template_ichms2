@@ -60,19 +60,13 @@ const eslintConfig = defineConfig([
           selector:
             "ImportDeclaration[source.value=/^@\\/features\\/.*\\/service(\\.ts)?$/] > ImportDefaultSpecifier",
           message:
-            "HR-IMP-03: app 라우트에서는 service.ts default import를 금지합니다. get*ForPage named import만 허용됩니다.",
+            "HR-IMP-03: app 라우트에서는 service.ts default import를 금지합니다. named import만 허용됩니다.",
         },
         {
           selector:
             "ImportDeclaration[source.value=/^@\\/features\\/.*\\/service(\\.ts)?$/] > ImportNamespaceSpecifier",
           message:
-            "HR-IMP-03: app 라우트에서는 service.ts namespace import를 금지합니다. get*ForPage named import만 허용됩니다.",
-        },
-        {
-          selector:
-            "ImportDeclaration[source.value=/^@\\/features\\/.*\\/service(\\.ts)?$/] > ImportSpecifier:not([imported.name=/^get[A-Za-z0-9]*ForPage$/])",
-          message:
-            "HR-IMP-03: app 라우트에서는 service.ts의 get*ForPage named import만 허용됩니다.",
+            "HR-IMP-03: app 라우트에서는 service.ts namespace import를 금지합니다. named import만 허용됩니다.",
         },
       ],
     },
