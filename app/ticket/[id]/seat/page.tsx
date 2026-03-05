@@ -1,3 +1,4 @@
+'use client'
 import { SeatSelectionPage } from '@/features/ticket/seat/components/Page'
 
 type SeatSelectionRouteProps = {

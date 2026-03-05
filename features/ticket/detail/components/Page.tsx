@@ -1,12 +1,8 @@
-'use client'
-
 import { useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import {
-  ConfirmButton,
-  ImageWithSkeleton,
-  PreviousButton,
-} from '@/features/common/component'
+import { ConfirmButton } from '@/features/common/component/ConfirmButton'
+import { ImageWithSkeleton } from '@/features/common/component/ImageWithSkeleton'
+import { PreviousButton } from '@/features/common/component/PreviousButton'
 import { useTicketStore } from '@/features/common/store/useTicketStore'
 import { useEnterTicketMutation } from '@/features/ticket/detail/hooks/mutations'
 import { useTicketDetailQuery } from '@/features/ticket/detail/hooks/queries'

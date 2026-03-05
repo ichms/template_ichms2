@@ -1,12 +1,9 @@
-'use client'
-
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { ProgressBar } from '@/features/common/component'
+import { useCallback } from 'react'
+import { ProgressBar } from '@/features/common/component/ProgressBar'
 import { useTicketStore } from '@/features/common/store/useTicketStore'
 import { useQueueStatusQuery } from '@/features/ticket/queue/hooks/queries'
-import { TICKETING_ERROR_TYPE } from '@/features/ticket/shared/type'
-import { buildErrorSearch, msToMin } from '@/features/ticket/shared/utils'
+import { useQueueRouteGuard } from '@/features/ticket/queue/hooks/useQueueRouteGuard'
+import { msToMin } from '@/features/ticket/shared/utils'
 import { HttpError } from '@/packages/http/client'
 import { Clock } from '@/assets/icons/Clock'
 
@@ -15,54 +12,33 @@ interface QueuePageProps {
 }
 
 export const QueuePage = ({ ticketId }: QueuePageProps) => {
-  const router = useRouter()
   const tokenId = useTicketStore((state) => state.tokenId)
   const setTokenId = useTicketStore((state) => state.setTokenId)
 
   const queueStatusQuery = useQueueStatusQuery(tokenId, {
     polling: true,
   })
+  const queueTokenStatus = queueStatusQuery.data?.token.status
+  const queueHttpErrorStatus =
+    queueStatusQuery.error instanceof HttpError ? queueStatusQuery.error.status : null
 
-  useEffect(() => {
-    if (tokenId !== null) {
-      return
-    }
+  const handleExpireToken = useCallback(() => {
+    setTokenId(null)
+  }, [setTokenId])
 
-    router.replace(`/ticket/${ticketId}`)
-  }, [ticketId, tokenId, router])
+  useQueueRouteGuard({
+    ticketId,
+    tokenId,
+    isQueueStatusSuccess: queueStatusQuery.isSuccess,
+    isQueueStatusError: queueStatusQuery.isError,
+    queueTokenStatus,
+    queueHttpErrorStatus,
+    onExpireToken: handleExpireToken,
+  })
 
-  useEffect(() => {
-    if (!queueStatusQuery.isSuccess) {
-      return
-    }
-
-    if (queueStatusQuery.data.token.status === 'ready') {
-      router.replace(`/ticket/${ticketId}/seat`)
-      return
-    }
-
-    if (queueStatusQuery.data.token.status === 'expired') {
-      setTokenId(null)
-      router.replace(`/error${buildErrorSearch(TICKETING_ERROR_TYPE.TOKEN)}`)
-    }
-  }, [queueStatusQuery.data, queueStatusQuery.isSuccess, router, setTokenId, ticketId])
-
-  useEffect(() => {
-    if (!queueStatusQuery.isError) {
-      return
-    }
-
-    if (
-      queueStatusQuery.error instanceof HttpError &&
-      queueStatusQuery.error.status === 404
-    ) {
-      setTokenId(null)
-      router.replace(`/error${buildErrorSearch(TICKETING_ERROR_TYPE.TOKEN)}`)
-      return
-    }
-
-    router.replace(`/error${buildErrorSearch(TICKETING_ERROR_TYPE.UNEXPECTED)}`)
-  }, [queueStatusQuery.error, queueStatusQuery.isError, router, setTokenId])
+  if (tokenId === null) {
+    return null
+  }
 
   const { minutes, seconds } = msToMin(
     queueStatusQuery.data?.queueStatus.estimatedWaitTime ?? 0,

@@ -1,7 +1,5 @@
-'use client'
-
 import { useRouter } from 'next/navigation'
-import { TicketCard } from '@/features/common/component'
+import { TicketCard } from '@/features/common/component/TicketCard'
 import { useTicketListQuery } from '@/features/ticket/list/hooks/queries'
 
 export const TicketListPage = () => {

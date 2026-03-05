@@ -1,6 +1,7 @@
+'use client'
 import { QueuePage } from '@/features/ticket/queue/components/Page'
 
-type QueueRouteProps = {
+interface QueueRouteProps {
   params: Promise<{
     id: string
   }>

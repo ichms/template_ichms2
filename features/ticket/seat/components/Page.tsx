@@ -1,6 +1,4 @@
-'use client'
-
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   ConfirmButton,
@@ -9,11 +7,17 @@ import {
   SeatButton,
   WarningDialog,
 } from '@/features/common/component'
+
 import { useTicketStore } from '@/features/common/store/useTicketStore'
 import { useQueueStatusQuery } from '@/features/ticket/shared/hooks/queries'
 import { useCreateReservationMutation } from '@/features/ticket/seat/hooks/mutations'
 import { useTicketSeatsQuery } from '@/features/ticket/seat/hooks/queries'
-import { TICKETING_ERROR_TYPE, type Seat } from '@/features/ticket/shared/type'
+import { useSeatRouteGuard } from '@/features/ticket/seat/hooks/useSeatRouteGuard'
+import {
+  QUEUE_TOKEN_STATUS,
+  TICKETING_ERROR_TYPE,
+  type Seat,
+} from '@/features/ticket/shared/type'
 import { buildErrorSearch, formatCurrency } from '@/features/ticket/shared/utils'
 import { HttpError } from '@/packages/http/client'
 
@@ -31,53 +35,30 @@ export const SeatSelectionPage = ({ ticketId }: SeatSelectionPageProps) => {
   const queueStatusQuery = useQueueStatusQuery(tokenId, {
     polling: false,
   })
+  const queueTokenStatus = queueStatusQuery.data?.token.status
+  const queueHttpErrorStatus =
+    queueStatusQuery.error instanceof HttpError ? queueStatusQuery.error.status : null
 
   const seatListQuery = useTicketSeatsQuery(ticketId, {
-    enabled: queueStatusQuery.data?.token.status === 'ready',
+    enabled: queueTokenStatus === QUEUE_TOKEN_STATUS.READY,
   })
 
-  const createReservationMutation = useCreateReservationMutation()
+  const { mutateAsync: createReservation, isPending: isCreatingReservation } =
+    useCreateReservationMutation()
 
-  useEffect(() => {
-    if (tokenId !== null) {
-      return
-    }
+  const handleExpireToken = useCallback(() => {
+    setTokenId(null)
+  }, [setTokenId])
 
-    router.replace(`/ticket/${ticketId}`)
-  }, [router, ticketId, tokenId])
-
-  useEffect(() => {
-    if (!queueStatusQuery.isSuccess) {
-      return
-    }
-
-    if (queueStatusQuery.data.token.status === 'waiting') {
-      router.replace(`/ticket/${ticketId}/queue`)
-      return
-    }
-
-    if (queueStatusQuery.data.token.status === 'expired') {
-      setTokenId(null)
-      router.replace(`/error${buildErrorSearch(TICKETING_ERROR_TYPE.TOKEN)}`)
-    }
-  }, [queueStatusQuery.data, queueStatusQuery.isSuccess, router, setTokenId, ticketId])
-
-  useEffect(() => {
-    if (!queueStatusQuery.isError) {
-      return
-    }
-
-    if (
-      queueStatusQuery.error instanceof HttpError &&
-      queueStatusQuery.error.status === 404
-    ) {
-      setTokenId(null)
-      router.replace(`/error${buildErrorSearch(TICKETING_ERROR_TYPE.TOKEN)}`)
-      return
-    }
-
-    router.replace(`/error${buildErrorSearch(TICKETING_ERROR_TYPE.UNEXPECTED)}`)
-  }, [queueStatusQuery.error, queueStatusQuery.isError, router, setTokenId])
+  useSeatRouteGuard({
+    ticketId,
+    tokenId,
+    isQueueStatusSuccess: queueStatusQuery.isSuccess,
+    isQueueStatusError: queueStatusQuery.isError,
+    queueTokenStatus,
+    queueHttpErrorStatus,
+    onExpireToken: handleExpireToken,
+  })
 
   const seatSections = useMemo(() => {
     const section: Record<string, Seat[]> = {}
@@ -97,18 +78,60 @@ export const SeatSelectionPage = ({ ticketId }: SeatSelectionPageProps) => {
   }, [])
 
   const timeOutCallback = useCallback(() => {
-    setTokenId(null)
+    handleExpireToken()
     router.replace(`/error${buildErrorSearch(TICKETING_ERROR_TYPE.TOKEN)}`)
-  }, [router, setTokenId])
+  }, [handleExpireToken, router])
+
+  const handleCloseWarning = useCallback(() => {
+    setErrorMsg('')
+  }, [])
+
+  const handleConfirmSeat = useCallback(async () => {
+    if (selectedSeat === null || tokenId === null) {
+      return
+    }
+
+    try {
+      const response = await createReservation({
+        seatId: selectedSeat.id,
+        tokenId,
+      })
+
+      setTokenId(null)
+      router.replace(`/ticket/${ticketId}/complete/${response.id}`)
+    } catch (error) {
+      if (error instanceof HttpError) {
+        if (error.status === 410) {
+          timeOutCallback()
+          return
+        }
+
+        if (error.status === 400 || error.status === 404) {
+          setErrorMsg(error.message)
+        }
+
+        return
+      }
+
+      router.replace(`/error${buildErrorSearch(TICKETING_ERROR_TYPE.UNEXPECTED)}`)
+    }
+  }, [
+    createReservation,
+    router,
+    selectedSeat,
+    setTokenId,
+    ticketId,
+    timeOutCallback,
+    tokenId,
+  ])
+
+  if (tokenId === null) {
+    return null
+  }
 
   return (
     <>
-      <WarningDialog
-        errorMsg={errorMsg}
-        onClose={() => {
-          setErrorMsg('')
-        }}
-      />
+      <WarningDialog errorMsg={errorMsg} onClose={handleCloseWarning} />
       <div className='mx-auto max-w-4xl md:px-6'>
         <div className='flex h-30 items-center justify-between'>
           <PreviousButton />
@@ -164,42 +187,11 @@ export const SeatSelectionPage = ({ ticketId }: SeatSelectionPageProps) => {
               buttonText='좌석 선택'
               disabled={
                 selectedSeat === null ||
-                createReservationMutation.isPending ||
+                isCreatingReservation ||
                 tokenId === null ||
-                queueStatusQuery.data?.token.status !== 'ready'
+                queueTokenStatus !== QUEUE_TOKEN_STATUS.READY
               }
-              onClick={async () => {
-                if (selectedSeat === null || tokenId === null) {
-                  return
-                }
-
-                try {
-                  const response = await createReservationMutation.mutateAsync({
-                    seatId: selectedSeat.id,
-                    tokenId,
-                  })
-
-                  setTokenId(null)
-                  router.replace(`/ticket/${ticketId}/complete/${response.id}`)
-                } catch (error) {
-                  if (error instanceof HttpError) {
-                    if (error.status === 410) {
-                      timeOutCallback()
-                      return
-                    }
-
-                    if (error.status === 400 || error.status === 404) {
-                      setErrorMsg(error.message)
-                    }
-
-                    return
-                  }
-
-                  router.replace(
-                    `/error${buildErrorSearch(TICKETING_ERROR_TYPE.UNEXPECTED)}`,
-                  )
-                }
-              }}
+              onClick={handleConfirmSeat}
             />
           </div>
         </div>

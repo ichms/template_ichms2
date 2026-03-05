@@ -1,9 +1,7 @@
-'use client'
-
 import Link from 'next/link'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { PrintInfo } from '@/features/common/component'
+import { PrintInfo } from '@/features/common/component/PrintInfo'
 import { useReservationDetailQuery } from '@/features/ticket/complete/hooks/queries'
 import { TICKETING_ERROR_TYPE } from '@/features/ticket/shared/type'
 import { buildErrorSearch, formatCurrency } from '@/features/ticket/shared/utils'
@@ -19,22 +17,23 @@ export const ReservationCompletePage = ({
 }: ReservationCompletePageProps) => {
   const router = useRouter()
   const reservationDetailQuery = useReservationDetailQuery(reservationId)
+  const reservationErrorStatus =
+    reservationDetailQuery.error instanceof HttpError
+      ? reservationDetailQuery.error.status
+      : null
 
   useEffect(() => {
     if (!reservationDetailQuery.isError) {
       return
     }
 
-    if (
-      reservationDetailQuery.error instanceof HttpError &&
-      reservationDetailQuery.error.status === 404
-    ) {
+    if (reservationErrorStatus === 404) {
       router.replace(`/error${buildErrorSearch(TICKETING_ERROR_TYPE.NOT_FOUND)}`)
       return
     }
 
     router.replace(`/error${buildErrorSearch(TICKETING_ERROR_TYPE.UNEXPECTED)}`)
-  }, [reservationDetailQuery.error, reservationDetailQuery.isError, router])
+  }, [reservationDetailQuery.isError, reservationErrorStatus, router])
 
   if (reservationDetailQuery.isPending || reservationDetailQuery.isError) {
     return (

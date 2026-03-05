@@ -18,7 +18,9 @@ export const ImageWithSkeleton = ({
   className,
   sizes,
 }: ImageWithSkeletonProps) => {
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [loadedSrc, setLoadedSrc] = useState<string | null>(null)
+  const isLoaded = loadedSrc === src
+
   const config = preset !== undefined ? imagePresetConfig[preset] : undefined
   const resolvedAspectRatio = aspectRatio ?? config?.aspectRatio ?? 'aspect-video'
   const resolvedSizes = sizes ?? config?.sizes ?? '100vw'
@@ -39,10 +41,10 @@ export const ImageWithSkeleton = ({
         }`}
         fill
         onError={() => {
-          setIsLoaded(true)
+          setLoadedSrc(src)
         }}
         onLoad={() => {
-          setIsLoaded(true)
+          setLoadedSrc(src)
         }}
         sizes={resolvedSizes}
         src={src}
