@@ -20,7 +20,7 @@ const formatCurrency = (amount: number) => {
 export const TicketCard = ({ onClick, ...ticket }: TicketCardProps) => {
   return (
     <button
-      className='flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-gray-300 hover:shadow-lg'
+      className='relative z-0 flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-gray-300 hover:z-10 hover:shadow-lg'
       onClick={() => {
         onClick()
       }}

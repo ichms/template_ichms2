@@ -1,3 +1,0 @@
-design-system 스킬이 비활성화되어 있습니다.
-
-재활성화: SKILL.md.disabled → SKILL.md 로 파일명 변경
