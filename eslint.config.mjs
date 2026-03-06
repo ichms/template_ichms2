@@ -52,6 +52,57 @@ const eslintConfig = defineConfig([
     },
   },
   {
+    files: ['**/hooks/queries.{ts,tsx,mts}'],
+    rules: {
+      '@typescript-eslint/naming-convention': [
+        'error',
+        {
+          selector: 'variable',
+          modifiers: ['const', 'exported'],
+          format: ['camelCase'],
+          custom: {
+            regex: '^use[A-Z].*Query$',
+            match: true,
+          },
+        },
+      ],
+    },
+  },
+  {
+    files: ['**/hooks/mutations.{ts,tsx,mts}'],
+    rules: {
+      '@typescript-eslint/naming-convention': [
+        'error',
+        {
+          selector: 'variable',
+          modifiers: ['const', 'exported'],
+          format: ['camelCase'],
+          custom: {
+            regex: '^use[A-Z].*Mutation$',
+            match: true,
+          },
+        },
+      ],
+    },
+  },
+  {
+    files: ['features/**/store/**/*.{ts,tsx,mts}'],
+    rules: {
+      '@typescript-eslint/naming-convention': [
+        'error',
+        {
+          selector: 'variable',
+          modifiers: ['const', 'exported'],
+          format: ['camelCase'],
+          custom: {
+            regex: '^use(Set[A-Z].*|[A-Z].*Value)$',
+            match: true,
+          },
+        },
+      ],
+    },
+  },
+  {
     files: ['app/**/*.{ts,tsx,mts}'],
     rules: {
       'no-restricted-syntax': [
