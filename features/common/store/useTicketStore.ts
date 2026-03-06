@@ -1,15 +1,11 @@
-import { create } from 'zustand'
+import { atom, useAtomValue, useSetAtom } from 'jotai'
 
-type TicketStoreState = {
-  tokenId: string | null
-  setTokenId: (tokenId: string | null) => void
+const tokenIdAtom = atom<string | null>(null)
+
+export const useTokenIdValue = () => {
+  return useAtomValue(tokenIdAtom)
 }
 
-export const useTicketStore = create<TicketStoreState>((set) => {
-  return {
-    tokenId: null,
-    setTokenId: (tokenId) => {
-      set({ tokenId })
-    },
-  }
-})
+export const useSetTokenId = () => {
+  return useSetAtom(tokenIdAtom)
+}

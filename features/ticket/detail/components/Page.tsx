@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation'
 import { ConfirmButton } from '@/features/common/component/ConfirmButton'
 import { ImageWithSkeleton } from '@/features/common/component/ImageWithSkeleton'
 import { PreviousButton } from '@/features/common/component/PreviousButton'
-import { useTicketStore } from '@/features/common/store/useTicketStore'
+import { useSetTokenId } from '@/features/common/store/useTicketStore'
 import { useEnterTicketMutation } from '@/features/ticket/detail/hooks/mutations'
 import { useTicketDetailQuery } from '@/features/ticket/detail/hooks/queries'
 import { TICKETING_ERROR_TYPE } from '@/features/ticket/shared/type'
@@ -17,7 +17,7 @@ interface DetailPageProps {
 export const DetailPage = ({ ticketId }: DetailPageProps) => {
   const ticketDetailQuery = useTicketDetailQuery(ticketId)
   const enterTicketMutation = useEnterTicketMutation()
-  const setTokenId = useTicketStore((state) => state.setTokenId)
+  const setTokenId = useSetTokenId()
   const router = useRouter()
 
   const handleConfirm = useCallback(async () => {
