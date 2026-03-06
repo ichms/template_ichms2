@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { ProgressBar } from '@/features/common/component/ProgressBar'
-import { useTicketStore } from '@/features/common/store/useTicketStore'
+import { useSetTokenId, useTokenIdValue } from '@/features/common/store/useTicketStore'
 import { useQueueStatusQuery } from '@/features/ticket/queue/hooks/queries'
 import { useQueueRouteGuard } from '@/features/ticket/queue/hooks/useQueueRouteGuard'
 import { msToMin } from '@/features/ticket/shared/utils'
@@ -12,8 +12,8 @@ interface QueuePageProps {
 }
 
 export const QueuePage = ({ ticketId }: QueuePageProps) => {
-  const tokenId = useTicketStore((state) => state.tokenId)
-  const setTokenId = useTicketStore((state) => state.setTokenId)
+  const tokenId = useTokenIdValue()
+  const setTokenId = useSetTokenId()
 
   const queueStatusQuery = useQueueStatusQuery(tokenId, {
     polling: true,

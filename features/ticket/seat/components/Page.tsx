@@ -8,7 +8,7 @@ import {
   WarningDialog,
 } from '@/features/common/component'
 
-import { useTicketStore } from '@/features/common/store/useTicketStore'
+import { useSetTokenId, useTokenIdValue } from '@/features/common/store/useTicketStore'
 import { useQueueStatusQuery } from '@/features/ticket/shared/hooks/queries'
 import { useCreateReservationMutation } from '@/features/ticket/seat/hooks/mutations'
 import { useTicketSeatsQuery } from '@/features/ticket/seat/hooks/queries'
@@ -27,8 +27,8 @@ interface SeatSelectionPageProps {
 
 export const SeatSelectionPage = ({ ticketId }: SeatSelectionPageProps) => {
   const router = useRouter()
-  const tokenId = useTicketStore((state) => state.tokenId)
-  const setTokenId = useTicketStore((state) => state.setTokenId)
+  const tokenId = useTokenIdValue()
+  const setTokenId = useSetTokenId()
   const [errorMsg, setErrorMsg] = useState('')
   const [selectedSeat, setSelectedSeat] = useState<Seat | null>(null)
 
