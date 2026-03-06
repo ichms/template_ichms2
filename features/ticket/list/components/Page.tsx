@@ -1,4 +1,5 @@
 import { useRouter } from 'next/navigation'
+import { Button } from '@/features/common/component/Button'
 import { TicketCard } from '@/features/common/component/TicketCard'
 import { useTicketListQuery } from '@/features/ticket/list/hooks/queries'
 
@@ -11,6 +12,10 @@ export const TicketListPage = () => {
       <div className='flex h-30 flex-col justify-center gap-2'>
         <p className='text-3XL-Bold'>Available Events</p>
         <p>Browse and select an event to book tickets</p>
+        <div className='flex gap-2'>
+          <Button variant='primary'>Primary</Button>
+          <Button variant='outline'>Outline</Button>
+        </div>
       </div>
 
       {ticketListQuery.isPending ? (

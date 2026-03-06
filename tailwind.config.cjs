@@ -1,6 +1,25 @@
 module.exports = {
   theme: {
     extend: {
+      colors: {
+        // ConfirmButton 스타일과 통일: neutral-900 / neutral-800
+        primary: {
+          DEFAULT: '#171717', // neutral-900
+          500: '#525252', // neutral-600 (focus ring)
+          700: '#262626', // neutral-800
+          800: '#404040', // neutral-700
+        },
+        secondary: {
+          DEFAULT: '#64748b',
+          700: '#475569',
+          800: '#334155',
+        },
+      },
+      borderRadius: {
+        'radius-md': '0.375rem',
+        'radius-lg': '0.5rem',
+        'radius-xl': '0.75rem',
+      },
       fontSize: {
         '4XL-Bold': ['48px', { fontWeight: 700, lineHeight: '60px' }],
         '4XL-Medium': ['48px', { fontWeight: 500, lineHeight: '60px' }],
