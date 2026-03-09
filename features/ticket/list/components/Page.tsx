@@ -1,6 +1,5 @@
 import { useRouter } from 'next/navigation'
-import { Button } from '@/features/common/component/Button'
-import { DefaultInput } from '@/features/common/component/DefaultInput'
+
 import { TicketCard } from '@/features/common/component/TicketCard'
 import { useTicketListQuery } from '@/features/ticket/list/hooks/queries'
 
@@ -13,12 +12,6 @@ export const TicketListPage = () => {
       <div className='flex flex-col gap-2 py-6'>
         <p className='text-3XL-Bold'>Available Events</p>
         <p>Browse and select an event to book tickets</p>
-        <div className='flex gap-2'>
-          <Button variant='primary'>Primary</Button>
-          <Button variant='outline'>Outline</Button>
-        </div>
-        {/* AI로 생성한 컴포넌트 예시 */}
-        <DefaultInput placeholder='이벤트 검색' />
       </div>
 
       {ticketListQuery.isPending ? (
