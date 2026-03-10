@@ -1,4 +1,3 @@
-'use client'
 import { DetailPage } from '@/features/ticket/detail/components/Page'
 
 type TicketDetailRouteProps = {

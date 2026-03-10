@@ -28,5 +28,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run hard-gate checks
+      - name: Run hard-gate and structure checks
         run: pnpm ci:check
