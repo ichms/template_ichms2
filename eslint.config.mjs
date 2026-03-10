@@ -9,6 +9,7 @@ const eslintConfig = defineConfig([
     files: ['**/*.{ts,tsx,mts}'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
+      '@next/next/no-async-client-component': 'error',
       'react-hooks/exhaustive-deps': 'error',
     },
   },
@@ -103,7 +104,7 @@ const eslintConfig = defineConfig([
     },
   },
   {
-    files: ['app/**/*.{ts,tsx,mts}'],
+    files: ['app/**/page.{ts,tsx,mts}'],
     rules: {
       'no-restricted-imports': [
         'error',
@@ -115,6 +116,14 @@ const eslintConfig = defineConfig([
                 'HR-IMP-03: app 레이어에서는 feature service import를 금지합니다. 필요한 경우 EX-01 예외 승인을 받으세요.',
             },
           ],
+        },
+      ],
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "Program > ExpressionStatement[directive='use client']",
+          message:
+            'HR-REACT-04: `app/*/page.tsx`에는 `use client`를 붙이지 않습니다. 클라이언트 경계는 feature component로 내리세요.',
         },
       ],
     },
