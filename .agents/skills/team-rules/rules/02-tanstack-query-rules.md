@@ -20,6 +20,7 @@
 - 서버 상태는 Query cache를 단일 소스로 사용한다.
 - 조건부 query는 `enabled`로 제어한다.
 - 화면은 loading/error 상태를 반드시 처리한다.
+- query key와 query hook의 소유권은 feature에 두고, `app/*`는 이를 직접 생성하지 않는다.
 
 ## MUST 검증 메타
 
@@ -35,7 +36,8 @@
 - key 구조를 `all > lists > list`, `all > details > detail`로 유지한다.
 - key 파라미터는 정규화 객체로 전달한다.
 - prefetch/optimistic update는 사용자 체감 성능이 필요한 화면에서 사용한다.
-- `app/*` read-only 조회가 필요한 경우 `service.ts`의 공개 조회 함수(`get*ForPage`)를 사용한다.
+- `app/*` read-only 조회가 필요한 경우 `service.ts`의 공개 read-only 함수를 사용한다.
+- mutation hook의 `onSuccess`/`onError`는 invalidate/cache update/rollback 같은 캐시 동기화에 집중하고, 화면 전용 부작용은 호출 컴포넌트에서 처리한다.
 
 ## MUST NOT
 
@@ -51,10 +53,13 @@
 
 ## 표준 파일 책임
 
+- `app/*`: route param 전달, 엔트리 조합, 필요 시 service의 공개 read-only 함수 호출
 - `queryKeys.ts`: key factory
-- `service.ts`: API I/O + app read-only 공개 조회 함수(`get*ForPage`, 선택)
+- `service.ts`: API I/O + app용 공개 read-only 함수(선택)
 - `hooks/queries.ts`: query hook
 - `hooks/mutations.ts`: mutation hook
+
+- app용 공개 read-only 함수의 네이밍은 규정하지 않는다. 의미가 드러나는 이름이면 충분하다.
 
 ## queryKeys.ts 파일 위치
 
@@ -65,10 +70,12 @@
 ## 리뷰 체크 (Yes/No)
 
 - Query key가 `queryKeys.ts`에서만 생성되는가?
+- `app/*`가 query key/query hook을 직접 소유하지 않는가?
 - Mutation 성공 시 필요한 invalidate가 최소 범위로 포함되는가?
+- mutation hook 콜백과 화면 부작용의 책임이 섞이지 않았는가?
 - `service.ts`가 훅 없이 순수 API 함수만 포함하는가?
 - 서버 상태를 Query cache 단일 소스로 유지하는가?
-- `app/*` read-only 조회가 필요할 때 `service.ts` 공개 함수(`get*ForPage`) 경유인가?
+- `app/*` read-only 조회가 필요할 때 `service.ts` 공개 read-only 함수 경유인가?
 
 ## 자동 검증
 

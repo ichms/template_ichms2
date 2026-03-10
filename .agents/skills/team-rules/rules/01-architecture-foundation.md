@@ -15,14 +15,14 @@
 - 기능 코드는 `features/domain-*` 내부에 둔다.
 - `app/*/page.tsx`는 라우트 엔트리와 조합만 담당한다.
 - API 호출, 캐시 제어, UI 렌더링을 파일 단위로 분리한다.
-- `app/*`에서 read-only 조회가 필요하면 `features/domain-*/service.ts` 공개 함수(`get*ForPage`)만 호출한다.
+- `app/*`에서 read-only 조회가 필요하면 `features/domain-*/service.ts`의 공개 read-only 함수만 호출한다.
 
 ## MUST 검증 메타
 
 | Rule ID | 자동 검증 | 수동 검증 체크포인트 |
 | --- | --- | --- |
 | `HR-ARC-01` | 경계 린트(선택) | `app/*/page.tsx`가 엔트리/조합만 수행하는지 |
-| `HR-ARC-02` | import 제한 규칙 | app read-only가 `get*ForPage`만 경유하는지 |
+| `HR-ARC-02` | import 제한 규칙 | app read-only가 공개 read-only 함수만 경유하는지 |
 | `HR-ARC-03` | 제한적 | app에서 write/invalidate/정책 side effect 유무 |
 
 ## SHOULD
@@ -82,7 +82,7 @@ export const getOrders = async (params: { status?: string }) => {
   return await apiClient.get('/api/orders/v1', { params })
 }
 
-export const getOrdersForPage = async () => {
+export const loadOrdersPageData = async () => {
   return await getOrders({})
 }
 ```
@@ -92,6 +92,7 @@ export const getOrdersForPage = async () => {
 - `app/*/page.tsx`가 엔트리 역할만 하는가?
 - `app/*` read-only 조회가 필요할 때 `service.ts` 공개 함수만 경유하는가?
 - `app/*`에서 write/invalidate가 없는가?
+- app용 공개 read-only 함수의 이름을 별도 패턴으로 강제하지 않았는가?
 
 ## 자동 검증
 

@@ -5,10 +5,11 @@
 - 적용 범위: 신규 기능 개발 시 샘플 참조
 - API 전략: Next.js App Router Route Handlers (`app/api/*/route.ts`) + `createProxy`
 - 클라이언트 API 호출: `features/*/service.ts`에서 `apiClient` 사용
+- 참고: 문서의 `domain-a`는 개념 예시다. 실제 적용 시에는 현재 레포의 기능명 규칙을 따른다.
 
 ## 템플릿 타입
 
-### A. Minimal (조회 전용, Client Page + Route Handler)
+### A. Minimal (조회 전용, Thin Route + Client Feature Page + Route Handler)
 
 - `app/(page)/domain-a/list/page.tsx`
 - `app/api/domain-a/v1/route.ts`
@@ -24,16 +25,15 @@
 
 ### C. SSR/SEO read-only (선택)
 
-- Full 또는 Minimal 세트 + `service.ts`의 `get*ForPage` 함수
-- `get*ForPage`는 `apiClient` 대신 서버 안전한 `fetch`를 사용
+- Full 또는 Minimal 세트 + `service.ts`의 app용 공개 read-only 함수
+- app용 공개 read-only 함수의 네이밍은 고정하지 않는다.
+- app용 공개 read-only 함수는 `apiClient` 대신 서버 안전한 `fetch`를 사용
 - `pages/api/*`는 사용하지 않고 `app/api/*/route.ts`만 사용한다.
 
 ## Minimal 스켈레톤 (현재 워크스페이스 Best Practice)
 
 ```tsx
 // app/(page)/domain-a/list/page.tsx
-'use client'
-
 import { DomainAPage } from '@/features/domain-a/components/Page'
 
 const DomainAListRoute = () => <DomainAPage />
@@ -145,6 +145,7 @@ export const useDomainAListQuery = (params: DomainAListParams) => {
 
 ```tsx
 // features/domain-a/components/Page.tsx
+'use client'
 
 import { useState } from 'react'
 import { useDomainAListQuery } from '@/features/domain-a/hooks/queries'
@@ -226,6 +227,8 @@ export const useUpdateDomainAStatusMutation = () => {
 }
 ```
 
+- 원칙: mutation hook 콜백은 캐시 동기화만 처리하고, navigation/toast/dialog는 호출 컴포넌트가 담당한다.
+
 ## SSR/SEO read-only 스켈레톤 (선택)
 
 ```ts
@@ -245,7 +248,7 @@ const toQueryString = (params: DomainAListParams) => {
   return queryString ? `?${queryString}` : ''
 }
 
-export const getDomainAListForPage = async (
+export const loadDomainAListPageData = async (
   params: DomainAListParams,
 ): Promise<DomainAListResponse> => {
   if (!OPERATION_SERVER_BASE_URL) {
@@ -271,11 +274,13 @@ export const getDomainAListForPage = async (
 ## 리뷰 체크 (Yes/No)
 
 - 기능 성격에 맞는 템플릿 타입을 선택했는가?
+- `app/*/page.tsx`가 기본적으로 Server Component로 유지되고, `use client`가 feature 경계에만 있는가?
 - API가 `app/api/*/route.ts` + `createProxy`로 구성되었는가? (`pages/api/*` 미사용)
 - `queryKeys.ts`를 통해서만 query key를 생성하는가?
 - `service.ts`가 순수 API 호출만 수행하는가? (React Query 훅 없음)
 - mutation 성공 시 최소 범위(`lists/detail`) invalidate를 수행하는가?
-- SSR/SEO read-only에서 `get*ForPage`가 서버 안전한 `fetch`를 사용하는가?
+- Client Component를 `async` 함수로 선언하지 않았는가?
+- SSR/SEO read-only에서 service의 공개 read-only 함수가 서버 안전한 `fetch`를 사용하는가?
 
 ## 자동 검증
 

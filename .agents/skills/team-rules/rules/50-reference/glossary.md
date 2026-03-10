@@ -4,9 +4,9 @@
 
 - `Thin Route`: `app/*/page.tsx`가 엔트리/조합만 담당하고 정책 로직은 갖지 않는 구조
 - `Domain Ownership`: 기능 도메인이 UI/API/캐시 정책 변경 책임을 가지는 원칙
-- `Read-only Fetch in app`: `app/*`에서 수행하는 조회 전용 데이터 호출. 반드시 `features/domain-*/service.ts` 공개 함수 경유
+- `Read-only Fetch in app`: `app/*`에서 수행하는 조회 전용 데이터 호출. 반드시 `features/domain-*/service.ts`의 공개 read-only 함수 경유
 - `Service Layer`: `features/domain-*/service.ts`. 순수 API 호출만 포함
-- `Page Read Function`: `features/domain-*/service.ts`의 `get*ForPage` 함수. app에서 허용되는 조회 전용 진입점
+- `Page Read Function`: `features/domain-*/service.ts`의 app용 공개 read-only 함수. app에서 허용되는 조회 전용 진입점이며 이름 패턴은 고정하지 않는다.
 - `Hard Rule`: 위반 시 차단 대상 규칙
 - `Soft Rule`: 설계 품질 향상을 위한 권고 규칙
 - `Hard Gate`: CI/리뷰 단계에서 머지 차단

@@ -33,9 +33,12 @@
 ## Warning Checklist (Comment Required)
 
 - mutation 성공 시 invalidate 범위가 최소화되어 있는가?
+- mutation hook 콜백은 캐시 동기화에 집중하고, navigation/toast/dialog 같은 화면 부작용은 컴포넌트가 처리하는가?
 - 서버 상태/store/로컬 상태의 역할 분리가 유지되는가?
 - 컴포넌트 분리 수준이 과하거나 부족하지 않은가?
 - `type.ts|types.ts|dto.ts`는 `type`을 유지하고, 컴포넌트/훅에서의 `interface` 사용은 가독성/`extends` 목적에 부합하는가?
+- `use client`가 최소 경계에만 적용되고, Client Component를 `async`로 선언하지 않았는가?
+- `features/<bounded-context>/shared`가 특정 subfeature 소유권을 침범하지 않는가?
 - Scale Check에 따른 분리 계획이 필요한가?
 
 ## Scale Check 템플릿
