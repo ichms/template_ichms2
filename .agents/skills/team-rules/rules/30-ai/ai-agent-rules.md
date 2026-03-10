@@ -27,6 +27,7 @@
 - `AI-MUST-08`: `app/*/page.tsx`는 기본적으로 Server Component로 생성한다. 클라이언트 상호작용은 가능한 한 `features/*/components/*`로 내린다.
 - `AI-MUST-09`: query key와 query hook의 소유권은 해당 feature의 `queryKeys.ts`, `hooks/*`에 둔다. `app/*`는 route param 전달과 조합만 담당한다.
 - `AI-MUST-10`: mutation hook의 `onSuccess`/`onError`에는 invalidate, cache update, optimistic rollback 같은 캐시 동기화 책임만 둔다. navigation, dialog, toast, form reset 같은 화면 부작용은 호출 컴포넌트에서 처리한다.
+- `AI-MUST-11`: feature의 `components` 디렉토리에는 템플릿 역할의 `Page.tsx` 하나만 두고, 나머지 `.tsx` UI 조각은 `components/elements/*`에 생성한다.
 
 ## 3) 공통 MUST NOT
 
@@ -39,6 +40,8 @@
 - `AI-NOT-07`: `app/*/page.tsx`에 관성적으로 `use client`를 붙이지 않는다.
 - `AI-NOT-08`: Client Component를 `async` 함수로 생성하지 않는다.
 - `AI-NOT-09`: 특정 subfeature의 service/query key에 의존하는 hook을 `shared` 디렉토리로 승격하지 않는다.
+- `AI-NOT-10`: `components/elements/*` 밖에 추가 `.tsx` 컴포넌트를 생성하지 않는다.
+- `AI-NOT-11`: `components/elements/*`에 hook/helper/type 파일을 생성하지 않는다.
 
 ## 4) Mode A 생성 순서 (신규 기능)
 
@@ -48,7 +51,8 @@
 4. `hooks/queries.ts`
 5. `hooks/mutations.ts` (mutation이 있는 경우에만)
 6. `components/Page.tsx`
-7. `app/*/page.tsx`
+7. `components/elements/*` (세부 UI가 필요한 경우에만)
+8. `app/*/page.tsx`
 
 ## 5) 출력 계약 (기본안)
 

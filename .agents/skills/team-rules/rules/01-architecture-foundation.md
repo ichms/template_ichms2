@@ -16,6 +16,7 @@
 - `app/*/page.tsx`는 라우트 엔트리와 조합만 담당한다.
 - API 호출, 캐시 제어, UI 렌더링을 파일 단위로 분리한다.
 - `app/*`에서 read-only 조회가 필요하면 `features/domain-*/service.ts`의 공개 read-only 함수만 호출한다.
+- feature 화면 진입점은 `components/Page.tsx` 하나로 유지하고, 세부 UI는 `components/elements/*`로 분리한다.
 
 ## MUST 검증 메타
 
@@ -74,6 +75,23 @@ const Page = () => <OrdersPage />;
 export default Page;
 ```
 
+```tsx
+// features/domain-orders/components/Page.tsx
+'use client'
+
+import { OrderFilterBar } from '@/features/domain-orders/components/elements/OrderFilterBar'
+import { OrderList } from '@/features/domain-orders/components/elements/OrderList'
+
+export const OrdersPage = () => {
+  return (
+    <section>
+      <OrderFilterBar />
+      <OrderList />
+    </section>
+  )
+}
+```
+
 ```ts
 // features/domain-orders/service.ts
 import { apiClient } from '@/packages/api/apiClient'
@@ -93,6 +111,7 @@ export const loadOrdersPageData = async () => {
 - `app/*` read-only 조회가 필요할 때 `service.ts` 공개 함수만 경유하는가?
 - `app/*`에서 write/invalidate가 없는가?
 - app용 공개 read-only 함수의 이름을 별도 패턴으로 강제하지 않았는가?
+- feature의 추가 UI 컴포넌트가 `components/elements/*` 아래에만 있는가?
 
 ## 자동 검증
 

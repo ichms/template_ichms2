@@ -43,7 +43,7 @@ description: Domain-oriented architecture standard for Next.js App Router + TanS
 3. `service.ts` (필요 시 app용 공개 read-only 함수)
 4. `hooks/queries.ts`
 5. `hooks/mutations.ts` (mutation 필요 시)
-6. `components/Page.tsx`
+6. `components/Page.tsx` + 필요 시 `components/elements/*.tsx`
 7. `app/*/page.tsx`
 
 ## Hard Gate Checklist (Must Pass)
@@ -99,6 +99,9 @@ Hard Gate 위반은 `EX-01` 승인 정보 없이 머지할 수 없다.
 - union은 `as const` 상수 소스에서 파생한다.
 - 불확실 입력은 `unknown`으로 받고 내로잉한다.
 - `components/*`, `hooks/*`의 Props/계약 타입은 `type`/`interface` 모두 허용한다.
+- feature의 화면 진입 컴포넌트는 `components/Page.tsx` 하나만 둔다.
+- `components` 하위의 추가 `.tsx`는 `components/elements/*`에만 둔다.
+- `components/elements/*`는 UI 컴포넌트 전용이며, hook/helper/type 파일은 둘 수 없다.
 - 상속/계약 가독성이 중요하면 `interface ... extends ...`를 우선 고려한다.
 - 부모 -> 자식 값 props는 명사형(`query`), 변경 요청은 `on*`, 자식 내부 DOM 핸들러는 `handle*`를 사용한다.
 

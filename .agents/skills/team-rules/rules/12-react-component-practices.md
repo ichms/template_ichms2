@@ -17,6 +17,7 @@
 - eslint의 `react-hooks/exhaustive-deps`를 비활성화하지 않는다.
 - 서버 상태 fetch는 TanStack Query 또는 `app -> features/*/service.ts` read-only 패턴으로 처리한다.
 - `use client`는 실제 상호작용 경계에만 두고, `app/*/page.tsx`는 특별한 이유가 없으면 Server Component로 유지한다.
+- feature의 `components` 디렉토리에는 템플릿 역할의 `Page.tsx` 하나만 두고, 나머지 `.tsx` UI는 `components/elements/*`에 둔다.
 - 부모가 소유한 상태값은 명사형 props로 전달한다. (`query`, `selectedId`, `isOpen`)
 - 부모 상태 변경 요청 핸들러는 `on*` 접두사로 전달한다. (`onQueryChange`, `onSelect`, `onOpenChange`)
 - 자식 내부 DOM 이벤트 핸들러는 `handle*` 네이밍을 사용한다. (`handleChange`, `handleClick`)
@@ -37,6 +38,7 @@
 - `controlled`/`uncontrolled` 여부와 무관하게 부모-자식 네이밍 계약을 동일하게 적용한다.
 - Props/훅 계약 타입은 `type`/`interface` 모두 허용한다. 상속 관계를 명확히 표현할 때는 `interface ... extends ...`를 우선 고려한다.
 - 반복되는 경로/시간/정책 literal은 상수로 승격하되, 단일 사용 문자열까지 과도하게 상수화하지 않는다.
+- `components/elements/*`는 UI 조합 조각에 집중시키고, 데이터 조회/변경 hook 생성 책임은 `Page.tsx` 또는 `hooks/*`에 둔다.
 
 ## MUST NOT
 
@@ -47,6 +49,8 @@
 - 부모의 React setter(`setQuery`, `setOpen`)를 자식 props 이름으로 직접 노출하지 않는다.
 - 필요한 이유 없이 route/page/layout 전체에 `use client`를 붙이지 않는다.
 - Client Component를 `async` 함수로 선언하지 않는다.
+- `components/elements/*` 밖에 추가 `.tsx` UI 컴포넌트를 흩어 놓지 않는다.
+- `components/elements/*`에 hook/helper/type 파일을 두지 않는다.
 
 ## 예외 가이드
 
@@ -68,6 +72,7 @@
 - `useEffect` 기반 mount fetch 대신 Query/server 패턴을 사용했는가?
 - `use client`가 최소 경계에만 적용되었는가?
 - Client Component가 `async` 함수가 아닌가?
+- `Page.tsx`가 feature의 유일한 템플릿 진입점이고, 세부 UI가 `components/elements/*`에 정리되어 있는가?
 - 부모-자식 props 네이밍이 계약(`value`/`on*`/`handle*`)을 따르는가?
 - 타입 규칙이 일관적인가? (`type.ts|types.ts|dto.ts`는 `type`, 컴포넌트/훅은 `type`/`interface` 허용)
 - 예외 사용 시 EX-01 양식이 있는가?

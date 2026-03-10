@@ -13,6 +13,7 @@
 
 - 허용 방향만 사용한다.
 - `app/*`는 기본적으로 `components/Page.tsx`를 통해 도메인에 진입한다.
+- feature의 세부 UI 컴포넌트는 `components/elements/*`에 둔다.
 - `app/*` read-only 조회가 필요한 경우 `features/domain-*/service.ts`의 공개 read-only 함수만 허용한다.
 
 ## 허용 방향
@@ -90,6 +91,7 @@ export default Page;
 - 금지 방향 import가 없는가?
 - `app/*`의 read-only 호출이 `service.ts` 공개 함수 경유인가?
 - `app/*`에서 read-only 공개 함수 외 `service.ts` import가 없는가?
+- feature의 추가 `.tsx`가 `components/elements/*` 밖으로 흩어지지 않았는가?
 
 ## 자동 검증
 

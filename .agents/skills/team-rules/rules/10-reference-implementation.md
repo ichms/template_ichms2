@@ -14,6 +14,7 @@
 - `app/(page)/domain-a/list/page.tsx`
 - `app/api/domain-a/v1/route.ts`
 - `features/domain-a/components/Page.tsx`
+- `features/domain-a/components/elements/*` (필요 시)
 - `features/domain-a/hooks/queries.ts`
 - `features/domain-a/service.ts`
 - `features/domain-a/queryKeys.ts`
@@ -148,6 +149,8 @@ export const useDomainAListQuery = (params: DomainAListParams) => {
 'use client'
 
 import { useState } from 'react'
+import { DomainAFilterButton } from '@/features/domain-a/components/elements/DomainAFilterButton'
+import { DomainAList } from '@/features/domain-a/components/elements/DomainAList'
 import { useDomainAListQuery } from '@/features/domain-a/hooks/queries'
 import { DOMAIN_A_STATUS, type DomainAListParams } from '@/features/domain-a/type'
 
@@ -167,9 +170,8 @@ export const DomainAPage = () => {
 
   return (
     <section>
-      <button
-        type='button'
-        onClick={() =>
+      <DomainAFilterButton
+        onToggle={() =>
           setParams((prev) => ({
             ...prev,
             status:
@@ -178,17 +180,45 @@ export const DomainAPage = () => {
                 : DOMAIN_A_STATUS.ACTIVE,
           }))
         }
-      >
-        상태 토글
-      </button>
-      <ul>
-        {(data?.items ?? []).map((item) => (
-          <li key={item.id}>
-            {item.name} ({item.status})
-          </li>
-        ))}
-      </ul>
+      />
+      <DomainAList items={data?.items ?? []} />
     </section>
+  )
+}
+```
+
+```tsx
+// features/domain-a/components/elements/DomainAFilterButton.tsx
+type DomainAFilterButtonProps = {
+  onToggle: () => void
+}
+
+export const DomainAFilterButton = ({ onToggle }: DomainAFilterButtonProps) => {
+  return (
+    <button type='button' onClick={onToggle}>
+      상태 토글
+    </button>
+  )
+}
+```
+
+```tsx
+// features/domain-a/components/elements/DomainAList.tsx
+import type { DomainAItem } from '@/features/domain-a/type'
+
+type DomainAListProps = {
+  items: DomainAItem[]
+}
+
+export const DomainAList = ({ items }: DomainAListProps) => {
+  return (
+    <ul>
+      {items.map((item) => (
+        <li key={item.id}>
+          {item.name} ({item.status})
+        </li>
+      ))}
+    </ul>
   )
 }
 ```
@@ -281,6 +311,7 @@ export const loadDomainAListPageData = async (
 - mutation 성공 시 최소 범위(`lists/detail`) invalidate를 수행하는가?
 - Client Component를 `async` 함수로 선언하지 않았는가?
 - SSR/SEO read-only에서 service의 공개 read-only 함수가 서버 안전한 `fetch`를 사용하는가?
+- feature의 추가 UI 컴포넌트가 `components/elements/*` 아래에만 있는가?
 
 ## 자동 검증
 
