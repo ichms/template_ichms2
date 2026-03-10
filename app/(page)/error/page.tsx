@@ -1,4 +1,4 @@
-import { TicketingErrorPage } from '@/features/ticket/list/components/ErrorPage'
+import { TicketingErrorPage } from '@/features/ticket/list/components/elements/ErrorPage'
 
 type ErrorRouteProps = {
   searchParams: Promise<{

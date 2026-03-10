@@ -1,11 +1,11 @@
 ## Hard Rule Pass/Fail
 
 - [ ] `HR-ARC-01` app route는 Thin Route(엔트리/조합)만 수행
-- [ ] `HR-ARC-02` app read-only 조회는 `service.ts` 공개 조회 함수만 경유
+- [ ] `HR-ARC-02` app은 read-only 데이터 조회를 위해 `service.ts`를 직접 호출하지 않음
 - [ ] `HR-ARC-03` app에서 write/invalidate/정책성 side effect 직접 처리 없음
 - [ ] `HR-IMP-01` `packages/* -> features/*` import 없음
 - [ ] `HR-IMP-02` `features/common -> features/*(common 제외)` import 없음
-- [ ] `HR-IMP-03` app의 `service.ts` import는 named import만 사용
+- [ ] `HR-IMP-03` app에서 `service.ts` import 없음 (예외 시 EX-01 첨부)
 - [ ] `HR-RQ-01` query key는 `queryKeys.ts` factory만 사용
 - [ ] `HR-RQ-02` `service.ts`에 React Query import 없음
 - [ ] `HR-TYPE-01` `any` 사용 없음

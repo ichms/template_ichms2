@@ -1,3 +1,5 @@
+'use client'
+
 import { useCallback } from 'react'
 import { ProgressBar } from '@/features/common/component/ProgressBar'
 import { useSetTokenId, useTokenIdValue } from '@/features/common/store/useTicketStore'

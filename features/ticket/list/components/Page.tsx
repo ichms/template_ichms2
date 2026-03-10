@@ -1,8 +1,15 @@
+'use client'
+
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+<<<<<<< HEAD
 import { Button } from '@/packages/ui/component/Button'
 import { BlockButton } from '@/packages/ui/component/BlockButton'
 import { DefaultInput } from '@/packages/ui/component/DefaultInput'
 import { SearchField } from '@/packages/ui/component/SearchField'
+=======
+
+>>>>>>> origin/dev
 import { TicketCard } from '@/features/common/component/TicketCard'
 import { useTicketListQuery } from '@/features/ticket/list/hooks/queries'
 
@@ -12,15 +19,22 @@ export const TicketListPage = () => {
 
   return (
     <div className='mx-auto max-w-6xl md:px-6'>
-      <div className='flex flex-col gap-2 py-6'>
-        <p className='text-3XL-Bold'>Available Events</p>
-        <p>Browse and select an event to book tickets</p>
-        <div className='flex gap-2'>
-          <Button variant='primary'>Primary</Button>
-          <Button variant='outline'>Outline</Button>
+      <div className='flex items-start justify-between gap-4 py-6'>
+        <div className='flex flex-col gap-2'>
+          <p className='text-3XL-Bold'>Available Events</p>
+          <p>Browse and select an event to book tickets</p>
         </div>
+<<<<<<< HEAD
 
         {/* AI로 생성한 컴포넌트 예시 */}
+=======
+        <Link
+          className='rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-700 transition-colors hover:bg-neutral-100'
+          href='/my'
+        >
+          마이페이지
+        </Link>
+>>>>>>> origin/dev
       </div>
 
       {ticketListQuery.isPending ? (
