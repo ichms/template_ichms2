@@ -16,13 +16,15 @@ description: Design system styling rules for Tailwind + cva (class-variance-auth
 ## Source Of Truth
 
 - cva/cn 스타일 규칙: `rules/01-cva-cn-styling.md` (`DS-01`)
+- Tailwind v4 토큰 + twMerge 충돌 규칙: `rules/02-tailwind-v4-token-pitfalls.md` (`DS-02`)
 - 문서 경로 탐색: `rules/00-index.md` (Rule Locator)
 
 ## Execution Order
 
 1. 작업 대상이 variant 기반 UI 컴포넌트인지 확인한다.
 2. `DS-01`의 MUST 항목(cva 구조, cn 병합 순서, VariantProps)을 적용한다.
-3. SHOULD/Warning 항목은 리뷰 시 코멘트로 남긴다.
+3. `DS-02`를 확인한다: `text-*` 색상에 camelCase 토큰 사용 여부, `text-white` 사용 여부, `extendTailwindMerge` 등록 여부.
+4. SHOULD/Warning 항목은 리뷰 시 코멘트로 남긴다.
 
 ## Rule Summary (DS-01)
 

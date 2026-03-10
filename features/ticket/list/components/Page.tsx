@@ -1,6 +1,8 @@
 import { useRouter } from 'next/navigation'
-import { Button } from '@/features/common/component/Button'
-import { DefaultInput } from '@/features/common/component/DefaultInput'
+import { Button } from '@/packages/ui/component/Button'
+import { BlockButton } from '@/packages/ui/component/BlockButton'
+import { DefaultInput } from '@/packages/ui/component/DefaultInput'
+import { SearchField } from '@/packages/ui/component/SearchField'
 import { TicketCard } from '@/features/common/component/TicketCard'
 import { useTicketListQuery } from '@/features/ticket/list/hooks/queries'
 
@@ -17,8 +19,8 @@ export const TicketListPage = () => {
           <Button variant='primary'>Primary</Button>
           <Button variant='outline'>Outline</Button>
         </div>
+
         {/* AI로 생성한 컴포넌트 예시 */}
-        <DefaultInput placeholder='이벤트 검색' />
       </div>
 
       {ticketListQuery.isPending ? (
@@ -57,6 +59,33 @@ export const TicketListPage = () => {
           })}
         </div>
       ) : null}
+
+      {/* BlockButton variants */}
+      <div className='flex flex-col gap-4 py-4'>
+        <p className='text-bodySm-SB'>Blue</p>
+        <div className='flex flex-col gap-2'>
+          <BlockButton colorType='blue'>Normal</BlockButton>
+          <BlockButton colorType='blue' disabled>
+            Disabled
+          </BlockButton>
+          <BlockButton colorType='blue' selected>
+            Selected
+          </BlockButton>
+        </div>
+
+        <p className='text-bodySm-SB'>Grey</p>
+        <div className='flex flex-col gap-2'>
+          <BlockButton colorType='grey'>Normal</BlockButton>
+          <BlockButton colorType='grey' disabled>
+            Disabled
+          </BlockButton>
+          <BlockButton colorType='grey' selected>
+            Selected
+          </BlockButton>
+        </div>
+      </div>
+      <br />
+      <SearchField placeholder='이벤트 검색' />
     </div>
   )
 }
