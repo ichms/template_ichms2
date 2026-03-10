@@ -13,8 +13,9 @@
 ## 2) 사람 문서 빠른 시작
 
 1. `human/hook-naming-convention.md`: Query/Jotai Hook 네이밍
-2. `human/husky-workflow.md`: 커밋/푸시 검증 흐름
-3. 필요 시 `rules/01,02,05,07,12`를 참고해 상세 원칙 확인
+2. `human/feature-structure-dos-and-donts.md`: 자주 틀리는 구조 Do / Don't
+3. `human/husky-workflow.md`: 커밋/푸시 검증 흐름
+4. 필요 시 `rules/01,02,05,07,12`를 참고해 상세 원칙 확인
 
 ## 3) 개발자가 자주 확인할 운영 기준
 
@@ -27,6 +28,8 @@
 - 경계 규칙:
   - `packages -> features` 금지
   - `features/common -> features/domain-*` 금지
+  - `app/*/page.tsx`는 thin route 유지
+  - 추가 UI `.tsx`는 `components/elements/*`로 정리
 
 ## 4) Husky 품질 게이트
 
