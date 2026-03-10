@@ -13,7 +13,7 @@
 ## 2) 사람 문서 빠른 시작
 
 1. `human/hook-naming-convention.md`: Query/Jotai Hook 네이밍
-2. `human/feature-structure-dos-and-donts.md`: 자주 틀리는 구조 Do / Don't
+2. `human/feature-structure-must-and-mustnt.md`: 자주 틀리는 구조 Do / Don't
 3. `human/husky-workflow.md`: 커밋/푸시 검증 흐름
 4. 필요 시 `rules/01,02,05,07,12`를 참고해 상세 원칙 확인
 
