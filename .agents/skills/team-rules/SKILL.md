@@ -40,7 +40,7 @@ description: Domain-oriented architecture standard for Next.js App Router + TanS
 
 1. `type.ts`
 2. `queryKeys.ts`
-3. `service.ts` (필요 시 app용 공개 read-only 함수)
+3. `service.ts`
 4. `hooks/queries.ts`
 5. `hooks/mutations.ts` (mutation 필요 시)
 6. `components/Page.tsx` + 필요 시 `components/elements/*.tsx`
@@ -49,11 +49,11 @@ description: Domain-oriented architecture standard for Next.js App Router + TanS
 ## Hard Gate Checklist (Must Pass)
 
 - `HR-ARC-01`: `app/*/page.tsx`는 Thin Route(엔트리/조합)만 담당한다.
-- `HR-ARC-02`: `app/*` read-only 조회는 `features/domain-*/service.ts`의 공개 read-only 함수만 경유한다.
+- `HR-ARC-02`: `app/*`는 read-only 데이터 조회를 위해 `features/*/service.ts`를 직접 호출하지 않는다.
 - `HR-ARC-03`: `app/*`에서 write/invalidate/정책성 side effect를 직접 처리하지 않는다.
 - `HR-IMP-01`: `packages/* -> features/*` import 금지.
 - `HR-IMP-02`: `features/common -> features/domain-*` import 금지.
-- `HR-IMP-03`: `app/*`에서 `service.ts` import는 read-only 공개 함수만 허용.
+- `HR-IMP-03`: `app/*`에서 `features/*/service.ts` import 금지. 예외는 `EX-01` 승인 케이스만 허용.
 - `HR-RQ-01`: query key는 `queryKeys.ts` factory로만 생성/사용.
 - `HR-RQ-02`: `service.ts`에 React Query 훅 import 금지(순수 API만).
 - `HR-TYPE-01`: `any` 금지.
@@ -73,7 +73,7 @@ Hard Gate 위반은 `EX-01` 승인 정보 없이 머지할 수 없다.
 
 ## Layer And Import Boundaries
 
-- `app/*`: 라우트 엔트리/조합, 필요 시 service의 공개 read-only 함수 호출
+- `app/*`: 라우트 엔트리/조합만 담당
 - `features/domain-*`: 도메인 UI/쿼리/서비스/타입 소유
 - `features/common`: 도메인 비의존 공통 UI/훅/유틸
 - `packages/*`: 범용 모듈만, app 정책/화면 흐름 결정 금지
@@ -89,7 +89,7 @@ Hard Gate 위반은 `EX-01` 승인 정보 없이 머지할 수 없다.
 
 - Query key는 `all > lists > list`, `all > details > detail` 구조를 기본으로 한다.
 - key 파라미터는 정규화 객체로 넣는다.
-- `service.ts`는 API I/O와 (선택) app용 공개 read-only 함수만 가진다.
+- `service.ts`는 API I/O만 가진다.
 - 서버 상태는 TanStack Query cache를 단일 소스로 유지한다.
 - URL 공유 상태는 URL에, 전역 UI 상태는 store에, 임시 입력 상태는 local/form state에 둔다.
 

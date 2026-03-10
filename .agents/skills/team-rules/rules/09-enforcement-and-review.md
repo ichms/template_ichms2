@@ -23,7 +23,7 @@
 ## Hard Checklist (Pass/Fail)
 
 - `app/*/page.tsx`가 엔트리 역할만 수행하는가?
-- `app/*` read-only 조회가 필요할 때 `features/*/service.ts` 공개 함수만 경유하는가?
+- `app/*`에서 `features/*/service.ts` import가 없는가? (예외 시 EX-01 존재)
 - `service.ts`가 순수 API 함수만 포함하는가?
 - query key가 `queryKeys.ts` factory를 통해 사용되는가?
 - import 방향 규칙을 위반하지 않았는가?

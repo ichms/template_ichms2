@@ -24,13 +24,6 @@
 
 - Minimal 세트 + `hooks/mutations.ts`, `app/api/domain-a/v1/[id]/route.ts`
 
-### C. SSR/SEO read-only (선택)
-
-- Full 또는 Minimal 세트 + `service.ts`의 app용 공개 read-only 함수
-- app용 공개 read-only 함수의 네이밍은 고정하지 않는다.
-- app용 공개 read-only 함수는 `apiClient` 대신 서버 안전한 `fetch`를 사용
-- `pages/api/*`는 사용하지 않고 `app/api/*/route.ts`만 사용한다.
-
 ## Minimal 스켈레톤 (현재 워크스페이스 Best Practice)
 
 ```tsx
@@ -259,48 +252,6 @@ export const useUpdateDomainAStatusMutation = () => {
 
 - 원칙: mutation hook 콜백은 캐시 동기화만 처리하고, navigation/toast/dialog는 호출 컴포넌트가 담당한다.
 
-## SSR/SEO read-only 스켈레톤 (선택)
-
-```ts
-// features/domain-a/service.ts
-import type { DomainAListParams, DomainAListResponse } from '@/features/domain-a/type'
-
-const OPERATION_SERVER_BASE_URL = process.env.OPERATION_SERVER_BASE_URL
-
-const toQueryString = (params: DomainAListParams) => {
-  const searchParams = new URLSearchParams({
-    page: String(params.page),
-    pageSize: String(params.pageSize),
-    keyword: params.keyword,
-    status: params.status,
-  })
-  const queryString = searchParams.toString()
-  return queryString ? `?${queryString}` : ''
-}
-
-export const loadDomainAListPageData = async (
-  params: DomainAListParams,
-): Promise<DomainAListResponse> => {
-  if (!OPERATION_SERVER_BASE_URL) {
-    throw new Error('OPERATION_SERVER_BASE_URL is not configured')
-  }
-
-  const response = await fetch(
-    `${OPERATION_SERVER_BASE_URL}/api/domain-a/v1${toQueryString(params)}`,
-    {
-      method: 'GET',
-      cache: 'no-store',
-    },
-  )
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch domain-a list for page')
-  }
-
-  return (await response.json()) as DomainAListResponse
-}
-```
-
 ## 리뷰 체크 (Yes/No)
 
 - 기능 성격에 맞는 템플릿 타입을 선택했는가?
@@ -310,7 +261,6 @@ export const loadDomainAListPageData = async (
 - `service.ts`가 순수 API 호출만 수행하는가? (React Query 훅 없음)
 - mutation 성공 시 최소 범위(`lists/detail`) invalidate를 수행하는가?
 - Client Component를 `async` 함수로 선언하지 않았는가?
-- SSR/SEO read-only에서 service의 공개 read-only 함수가 서버 안전한 `fetch`를 사용하는가?
 - feature의 추가 UI 컴포넌트가 `components/elements/*` 아래에만 있는가?
 
 ## 자동 검증

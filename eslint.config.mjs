@@ -105,19 +105,16 @@ const eslintConfig = defineConfig([
   {
     files: ['app/**/*.{ts,tsx,mts}'],
     rules: {
-      'no-restricted-syntax': [
+      'no-restricted-imports': [
         'error',
         {
-          selector:
-            'ImportDeclaration[source.value=/^@\\/features\\/.*\\/service(\\.ts)?$/] > ImportDefaultSpecifier',
-          message:
-            'HR-IMP-03: app 라우트에서는 service.ts default import를 금지합니다. named import만 허용됩니다.',
-        },
-        {
-          selector:
-            'ImportDeclaration[source.value=/^@\\/features\\/.*\\/service(\\.ts)?$/] > ImportNamespaceSpecifier',
-          message:
-            'HR-IMP-03: app 라우트에서는 service.ts namespace import를 금지합니다. named import만 허용됩니다.',
+          patterns: [
+            {
+              group: ['@/features/**/service', '@/features/**/service.ts'],
+              message:
+                'HR-IMP-03: app 레이어에서는 feature service import를 금지합니다. 필요한 경우 EX-01 예외 승인을 받으세요.',
+            },
+          ],
         },
       ],
     },

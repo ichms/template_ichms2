@@ -20,7 +20,7 @@
 - `AI-MUST-01`: Hard Rule(`GOV-02`)을 우선 적용한다.
 - `AI-MUST-02`: query key는 `queryKeys.ts` factory를 사용한다.
 - `AI-MUST-03`: 서버 상태는 TanStack Query cache를 단일 소스로 유지한다.
-- `AI-MUST-04`: `app/*` read-only 조회가 필요하면 `features/domain-*/service.ts`의 공개 read-only 함수 경유로만 생성한다. 함수 이름 패턴은 강제하지 않는다.
+- `AI-MUST-04`: `app/*`는 라우트 엔트리/조합만 담당하도록 생성한다. `features/*/service.ts` import는 예외 승인 없이는 생성하지 않는다.
 - `AI-MUST-05`: 규칙 충돌 시 `GOV-01` 우선순위를 따른다.
 - `AI-MUST-06`: `type.ts|types.ts|dto.ts`의 모델 타입은 `type`으로 생성한다.
 - `AI-MUST-07`: `components/*`, `hooks/*`의 Props/계약 타입은 `type` 또는 `interface`를 사용한다. 가독성/상속(`extends`)이 필요한 경우 `interface`를 우선 고려한다.
@@ -47,7 +47,7 @@
 
 1. `type.ts`
 2. `queryKeys.ts`
-3. `service.ts` (필요 시 app용 공개 read-only 함수 포함)
+3. `service.ts`
 4. `hooks/queries.ts`
 5. `hooks/mutations.ts` (mutation이 있는 경우에만)
 6. `components/Page.tsx`

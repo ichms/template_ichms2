@@ -15,11 +15,11 @@
 | Rule ID | Priority | Enforcement | 자동 검증 | 수동 검증 | 비고 |
 | --- | --- | --- | --- | --- | --- |
 | `HR-ARC-01` | P0 | Hard Gate | `app/*/page.tsx` 경계 린트(선택) | 라우트 책임 확인 | Thin Route 필수 |
-| `HR-ARC-02` | P0 | Hard Gate | import 제한 규칙 | 공개 read-only 함수 경유 확인 | app read-only 경계 |
+| `HR-ARC-02` | P0 | Hard Gate | import 제한 규칙 | app read-only 데이터 처리 위치 확인 | app read-only 경계 |
 | `HR-ARC-03` | P0 | Hard Gate | 제한적 | write/invalidate/side effect 위치 확인 | 정책성 행위 차단 |
 | `HR-IMP-01` | P0 | Hard Gate | `boundaries`/`no-restricted-imports` | 예외 사유 검토 | `packages -> features` 금지 |
 | `HR-IMP-02` | P0 | Hard Gate | `boundaries`/`no-restricted-imports` | 예외 사유 검토 | `common -> domain` 금지 |
-| `HR-IMP-03` | P0 | Hard Gate | import 제한 규칙 | app service import 목적 확인 | 공개 read-only 함수만 허용 |
+| `HR-IMP-03` | P0 | Hard Gate | import 제한 규칙 | 예외 승인 여부 확인 | app -> service 금지 |
 | `HR-RQ-01` | P0 | Hard Gate | custom lint/PR bot | key 정규화 확인 | queryKeys factory 강제 |
 | `HR-RQ-02` | P0 | Hard Gate | `service.ts` import 룰 | 파일 책임 확인 | React Query 훅 금지 |
 | `HR-RQ-03` | P1 | Warning | 제한적(정적 분석 보조) | mutation별 invalidate 확인 | 정적검증 한계로 Warning, `2026-06` 재평가 |
@@ -36,11 +36,11 @@
 ## 2) 아키텍처/경계 원문
 
 - `HR-ARC-01`: `app/*/page.tsx`는 라우트 엔트리/조합만 담당한다.
-- `HR-ARC-02`: `app/*`의 read-only 데이터 조회는 `features/domain-*/service.ts`의 공개 read-only 함수만 호출한다.
+- `HR-ARC-02`: `app/*`는 read-only 데이터 조회를 위해 `features/*/service.ts`를 직접 호출하지 않는다.
 - `HR-ARC-03`: `app/*`에서 write 요청(생성/수정/삭제), invalidate, 정책성 side effect를 직접 처리하지 않는다.
 - `HR-IMP-01`: `packages/* -> features/*` import 금지.
 - `HR-IMP-02`: `features/common -> features/domain-*` import 금지.
-- `HR-IMP-03`: `app/*`에서 `service.ts` import는 read-only 공개 함수 호출 케이스만 허용한다.
+- `HR-IMP-03`: `app/*`에서 `features/*/service.ts` import를 금지한다. 예외는 `EX-01` 승인 케이스만 허용한다.
 
 ## 3) 서버 상태/쿼리 원문
 

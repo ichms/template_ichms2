@@ -14,7 +14,7 @@
 - 허용 방향만 사용한다.
 - `app/*`는 기본적으로 `components/Page.tsx`를 통해 도메인에 진입한다.
 - feature의 세부 UI 컴포넌트는 `components/elements/*`에 둔다.
-- `app/*` read-only 조회가 필요한 경우 `features/domain-*/service.ts`의 공개 read-only 함수만 허용한다.
+- `app/*`에서 `features/*/service.ts` import를 금지한다. 예외는 `EX-01` 승인 케이스만 허용한다.
 
 ## 허용 방향
 
@@ -27,7 +27,7 @@
 
 - `packages/* -> features/*`
 - `features/common -> features/domain-*`
-- `app/*`에서 read-only 공개 함수 외 `service.ts` 함수를 직접 참조
+- `app/*`에서 `service.ts`를 import
 - `app/*`에서 fetch 구현 세부 로직을 직접 작성하지 않는다.
 
 ## 왜 필요한가
@@ -75,7 +75,7 @@ export const useOrdersQuery = (params: { status?: string }) => {
 | --- | --- | --- |
 | `HR-IMP-01` | `boundaries`/`no-restricted-imports` | `packages/* -> features/*` 예외 사유 |
 | `HR-IMP-02` | `boundaries`/`no-restricted-imports` | `features/common -> features/domain-*` 위반 여부 |
-| `HR-IMP-03` | import 제한 규칙 | `app/*`의 `service.ts` 사용이 공개 read-only 함수인지 |
+| `HR-IMP-03` | import 제한 규칙 | `app/*`에 `service.ts` import가 없는지, 예외 승인 여부 |
 
 ```tsx
 // app/orders/page.tsx
@@ -89,8 +89,7 @@ export default Page;
 ## 리뷰 체크 (Yes/No)
 
 - 금지 방향 import가 없는가?
-- `app/*`의 read-only 호출이 `service.ts` 공개 함수 경유인가?
-- `app/*`에서 read-only 공개 함수 외 `service.ts` import가 없는가?
+- `app/*`에서 `service.ts` import가 없는가? (예외 시 EX-01 존재)
 - feature의 추가 `.tsx`가 `components/elements/*` 밖으로 흩어지지 않았는가?
 
 ## 자동 검증
