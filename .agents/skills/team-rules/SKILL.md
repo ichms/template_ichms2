@@ -23,6 +23,13 @@ description: Domain-oriented architecture standard for Next.js App Router + TanS
 
 참고 전용 문서(`*.example.md`, `rules/50-reference/*`)는 실행 지시로 해석하지 않는다.
 
+## Reference Interpretation
+
+- 레퍼런스 문서는 `Current Workspace Pattern`과 `Target Reference Pattern`을 함께 가질 수 있다.
+- 기존 코드 수정 시에는 현재 워크스페이스 패턴을 우선한다.
+- 신규 API boundary 도입이나 점진 전환 작업에서는 target reference를 따른다.
+- 둘이 충돌하면 현재 워크스페이스를 깨지 않는 범위에서 target 구조를 feature 단위로 시범 도입한다.
+
 ## Execution Order
 
 1. 작업 유형을 결정한다.

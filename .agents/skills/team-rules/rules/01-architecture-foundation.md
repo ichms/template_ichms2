@@ -10,6 +10,20 @@
 - 아래 내용은 `HR-ARC-*` 해설이며, 강제 문구 원문/집행 강도는 `GOV-02`를 따른다.
 - 예외는 `EX-01` 템플릿으로만 기록한다.
 
+## Current vs Target
+
+- `Current Workspace Pattern`:
+  - 대부분의 feature는 `features/*/service.ts -> packages/http/client.ts` 경로를 사용한다.
+  - `app/*/page.tsx`는 thin route를 유지하고, 클라이언트 기능은 feature page가 담당한다.
+  - `components/Page.tsx + components/elements/*` 구조를 기본으로 사용한다.
+- `Target Reference Pattern`:
+  - feature별 `app/api/*/route.ts`를 thin proxy boundary로 둔다.
+  - 공통 요청 정책은 루트 `middleware.ts`에서 처리한다.
+  - `packages/http/proxy.ts` 또는 후속 helper가 upstream forwarding 책임을 가진다.
+- 운영 원칙:
+  - 기존 코드 수정은 current pattern을 우선한다.
+  - 신규 route boundary 시범 도입은 target pattern을 feature 단위로 제한 적용한다.
+
 ## MUST
 
 - 기능 코드는 `features/domain-*` 내부에 둔다.
@@ -76,32 +90,26 @@ export default Page;
 ```
 
 ```tsx
-// features/domain-orders/components/Page.tsx
+// features/my/components/Page.tsx
 'use client'
 
-import { OrderFilterBar } from '@/features/domain-orders/components/elements/OrderFilterBar'
-import { OrderList } from '@/features/domain-orders/components/elements/OrderList'
+import { ReservationDetailDialog } from '@/features/my/components/elements/ReservationDetailDialog'
 
-export const OrdersPage = () => {
+export const MyPage = () => {
   return (
     <section>
-      <OrderFilterBar />
-      <OrderList />
+      <ReservationDetailDialog />
     </section>
   )
 }
 ```
 
 ```ts
-// features/domain-orders/service.ts
-import { apiClient } from '@/packages/api/apiClient'
+// features/my/service.ts
+import { httpClient } from '@/packages/http/client'
 
-export const getOrders = async (params: { status?: string }) => {
-  return await apiClient.get('/api/orders/v1', { params })
-}
-
-export const loadOrdersPageData = async () => {
-  return await getOrders({})
+export const getMyReservationList = async () => {
+  return await httpClient.get('/api/my/reservations')
 }
 ```
 
