@@ -1,3 +1,5 @@
+'use client'
+
 import { useCallback, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
@@ -9,7 +11,7 @@ import {
 } from '@/features/common/component'
 
 import { useSetTokenId, useTokenIdValue } from '@/features/common/store/useTicketStore'
-import { useQueueStatusQuery } from '@/features/ticket/shared/hooks/queries'
+import { useQueueStatusQuery } from '@/features/ticket/queue/hooks/queries'
 import { useCreateReservationMutation } from '@/features/ticket/seat/hooks/mutations'
 import { useTicketSeatsQuery } from '@/features/ticket/seat/hooks/queries'
 import { useSeatRouteGuard } from '@/features/ticket/seat/hooks/useSeatRouteGuard'

@@ -1,3 +1,5 @@
+'use client'
+
 import { useRouter } from 'next/navigation'
 
 import { TicketCard } from '@/features/common/component/TicketCard'
