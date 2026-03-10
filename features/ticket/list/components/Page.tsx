@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 import { TicketCard } from '@/features/common/component/TicketCard'
@@ -11,9 +12,17 @@ export const TicketListPage = () => {
 
   return (
     <div className='mx-auto max-w-6xl md:px-6'>
-      <div className='flex flex-col gap-2 py-6'>
-        <p className='text-3XL-Bold'>Available Events</p>
-        <p>Browse and select an event to book tickets</p>
+      <div className='flex items-start justify-between gap-4 py-6'>
+        <div className='flex flex-col gap-2'>
+          <p className='text-3XL-Bold'>Available Events</p>
+          <p>Browse and select an event to book tickets</p>
+        </div>
+        <Link
+          className='rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-700 transition-colors hover:bg-neutral-100'
+          href='/my'
+        >
+          마이페이지
+        </Link>
       </div>
 
       {ticketListQuery.isPending ? (

@@ -7,9 +7,9 @@ export type QueueTokenStatus =
   (typeof QUEUE_TOKEN_STATUS)[keyof typeof QUEUE_TOKEN_STATUS]
 
 export const RESERVATION_STATUS = {
-  PENDING: 'pending',
-  COMPLETED: 'completed',
-  EXPIRED: 'expired',
+  BOOKED: 'booked',
+  CANCELED: 'canceled',
+  ATTENDED: 'attended',
 } as const
 export type ReservationStatus =
   (typeof RESERVATION_STATUS)[keyof typeof RESERVATION_STATUS]
@@ -75,6 +75,7 @@ export type Reservation = {
   status: ReservationStatus
   expiresAt: number
   createdAt: number
+  canceledAt?: number
 }
 
 export type ReservationDetailData = {

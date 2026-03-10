@@ -1,11 +1,12 @@
 import { delay, http, HttpResponse } from 'msw'
-import type {
-  QueueStatus,
-  QueueToken,
-  Reservation,
-  ReservationDetailData,
-  Seat,
-  Ticket,
+import {
+  RESERVATION_STATUS,
+  type QueueStatus,
+  type QueueToken,
+  type Reservation,
+  type ReservationDetailData,
+  type Seat,
+  type Ticket,
 } from '@/features/ticket/shared/type'
 
 const queueWaitDurationMs = 30_000
@@ -94,6 +95,80 @@ const createTokenId = () => {
 const createReservationId = () => {
   return `reservation_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
 }
+
+const setSeatAvailability = (ticketId: string, seatId: string, isAvailable: boolean) => {
+  const seats = seatsByTicketId[ticketId] ?? []
+
+  seatsByTicketId[ticketId] = seats.map((seat) => {
+    if (seat.id !== seatId) {
+      return seat
+    }
+
+    return {
+      ...seat,
+      isAvailable,
+    }
+  })
+}
+
+const createSeedReservation = (params: {
+  id: string
+  ticketId: string
+  seatId: string
+  status: Reservation['status']
+  createdAt: number
+  canceledAt?: number
+}) => {
+  const seat = seatsByTicketId[params.ticketId]?.find((item) => item.id === params.seatId)
+
+  if (seat === undefined) {
+    return
+  }
+
+  reservations.set(params.id, {
+    id: params.id,
+    ticketId: params.ticketId,
+    seatId: params.seatId,
+    price: seat.price,
+    status: params.status,
+    expiresAt: params.createdAt + 24 * 60 * 60 * 1_000,
+    createdAt: params.createdAt,
+    canceledAt: params.canceledAt,
+  })
+
+  if (params.status !== RESERVATION_STATUS.CANCELED) {
+    setSeatAvailability(params.ticketId, params.seatId, false)
+  }
+}
+
+const seedReservations = () => {
+  const now = Date.now()
+
+  createSeedReservation({
+    id: 'reservation_booked_1',
+    ticketId: '3',
+    seatId: '3-1-2',
+    status: RESERVATION_STATUS.BOOKED,
+    createdAt: now - 2 * 24 * 60 * 60 * 1_000,
+  })
+  createSeedReservation({
+    id: 'reservation_canceled_1',
+    ticketId: '1',
+    seatId: '1-1-3',
+    status: RESERVATION_STATUS.CANCELED,
+    createdAt: now - 14 * 24 * 60 * 60 * 1_000,
+    canceledAt: now - 12 * 24 * 60 * 60 * 1_000,
+  })
+  createSeedReservation({
+    id: 'reservation_attended_1',
+    ticketId: '2',
+    seatId: '2-1-3',
+    status: RESERVATION_STATUS.ATTENDED,
+    createdAt: now - 30 * 24 * 60 * 60 * 1_000,
+  })
+}
+
+seedReservations()
 
 const getWaitingTokens = (ticketId: string) => {
   return Array.from(queueTokens.values())
@@ -396,7 +471,7 @@ export const handlers = [
       ticketId: token.ticketId,
       seatId: updatedSeat.id,
       price: updatedSeat.price,
-      status: 'completed',
+      status: RESERVATION_STATUS.BOOKED,
       expiresAt: Date.now() + 24 * 60 * 60 * 1_000,
       createdAt: Date.now(),
     }
@@ -412,6 +487,73 @@ export const handlers = [
     return HttpResponse.json({
       success: true,
       data: reservation,
+    })
+  }),
+
+  http.get('/api/my/reservations', async () => {
+    await delay(200)
+
+    const data = Array.from(reservations.values())
+      .sort((left, right) => right.createdAt - left.createdAt)
+      .flatMap((reservation) => {
+        const ticket = findTicket(reservation.ticketId)
+
+        if (ticket === undefined) {
+          return []
+        }
+
+        return [
+          {
+            reservation,
+            ticket,
+          },
+        ]
+      })
+
+    return HttpResponse.json({
+      success: true,
+      data,
+    })
+  }),
+
+  http.post('/api/reservations/:id/cancel', async ({ params }) => {
+    await delay(200)
+
+    const reservationId = String(params.id ?? '')
+    const reservation = reservations.get(reservationId)
+
+    if (reservation === undefined) {
+      return HttpResponse.json(
+        {
+          success: false,
+          message: '예약을 찾을 수 없습니다.',
+        },
+        { status: 404 },
+      )
+    }
+
+    if (reservation.status !== RESERVATION_STATUS.BOOKED) {
+      return HttpResponse.json(
+        {
+          success: false,
+          message: '예매 취소가 불가능한 상태입니다.',
+        },
+        { status: 400 },
+      )
+    }
+
+    const canceledReservation: Reservation = {
+      ...reservation,
+      status: RESERVATION_STATUS.CANCELED,
+      canceledAt: Date.now(),
+    }
+
+    reservations.set(reservationId, canceledReservation)
+    setSeatAvailability(reservation.ticketId, reservation.seatId, true)
+
+    return HttpResponse.json({
+      success: true,
+      data: canceledReservation,
     })
   }),
 
