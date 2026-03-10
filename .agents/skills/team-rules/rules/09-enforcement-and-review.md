@@ -24,9 +24,13 @@
 
 - `app/*/page.tsx`가 엔트리 역할만 수행하는가?
 - `app/*`에서 `features/*/service.ts` import가 없는가? (예외 시 EX-01 존재)
+- `app/*/page.tsx`에 `use client`가 없는가?
+- Client Component를 `async` 함수로 선언하지 않았는가?
 - `service.ts`가 순수 API 함수만 포함하는가?
 - query key가 `queryKeys.ts` factory를 통해 사용되는가?
 - import 방향 규칙을 위반하지 않았는가?
+- `components/Page.tsx` 외 `.tsx`가 `components/elements/*` 밖에 없는가?
+- `features/<bounded>/shared`가 특정 subfeature의 `service.ts`, `queryKeys.ts`, `hooks/*`에 의존하지 않는가?
 - `any` 금지를 지켰는가?
 - `react-hooks/exhaustive-deps`를 비활성화하지 않았는가?
 
@@ -37,8 +41,6 @@
 - 서버 상태/store/로컬 상태의 역할 분리가 유지되는가?
 - 컴포넌트 분리 수준이 과하거나 부족하지 않은가?
 - `type.ts|types.ts|dto.ts`는 `type`을 유지하고, 컴포넌트/훅에서의 `interface` 사용은 가독성/`extends` 목적에 부합하는가?
-- `use client`가 최소 경계에만 적용되고, Client Component를 `async`로 선언하지 않았는가?
-- `features/<bounded-context>/shared`가 특정 subfeature 소유권을 침범하지 않는가?
 - Scale Check에 따른 분리 계획이 필요한가?
 
 ## Scale Check 템플릿

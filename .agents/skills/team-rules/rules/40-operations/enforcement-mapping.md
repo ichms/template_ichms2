@@ -9,6 +9,8 @@
 | Rule ID | 핵심 규칙 | Enforcement | 자동 검증 | 수동 검증 |
 | --- | --- | --- | --- | --- |
 | HR-IMP-01,02,03 | import 경계 | Hard Gate | `eslint-plugin-boundaries` 또는 `no-restricted-imports` | 경계 예외 사유 검토 |
+| HR-ARC-04 | feature 컴포넌트 배치 | Hard Gate | `scripts/check-feature-structure.mjs` | EX-01 예외 범위 검토 |
+| HR-ARC-05 | shared 소유권 | Hard Gate | `scripts/check-shared-ownership.mjs` | shared 승격 사유/만료일 검토 |
 | HR-RQ-01 | query key factory 강제 | Hard Gate | custom lint 또는 PR bot(`queryKey: ['` 탐지) | key 정규화 확인 |
 | HR-RQ-02 | service.ts 순수 API | Hard Gate | import rule(`service.ts` 내 `@tanstack/react-query` 금지) | 파일 책임 확인 |
 | HR-RQ-03 | mutation invalidate 누락 금지 | Warning | 정적 분석 보조(커버리지 제한) | mutation별 invalidate 확인 |
@@ -18,9 +20,9 @@
 | HR-REACT-01 | Effect 용도 제한 | Warning | 패턴 탐지(제한) | 이벤트/파생 상태 분리 확인 |
 | HR-REACT-02 | mount fetch 패턴 제한 | Warning | `useEffect` fetch 패턴 탐지 | Query/허용 fetch 경로 확인 |
 | HR-REACT-03 | hooks deps 비활성화 금지 | Hard Gate | `react-hooks/exhaustive-deps` | disable 범위/사유 확인 |
+| HR-REACT-04 | app page `use client` 금지 | Hard Gate | `no-restricted-syntax` | 예외 승인 여부 확인 |
+| HR-REACT-05 | async client component 금지 | Hard Gate | `@next/next/no-async-client-component` | 예외 승인 여부 확인 |
 | SR-RQ-03,04 | mutation 책임 분리 / query 소유권 | Warning | 제한적 | 캐시 동기화와 화면 부작용 분리, app의 query key 생성 여부 확인 |
-| SR-ARC-03 | bounded-context `shared` 사용 기준 | Warning | 없음 | 특정 subfeature 소유권 침범 여부 확인 |
-| SR-REACT-02,03 | `use client` 최소화 / no async client component | Warning | `@next/next/no-async-client-component` + 수동 | client boundary 위치 확인 |
 
 ## PR 템플릿 필수 섹션
 
