@@ -13,15 +13,13 @@ export const getMyReservationList = async (): Promise<MyReservationListItem[]> =
 export const getMyReservationDetail = async (
   reservationId: string,
 ): Promise<ReservationDetailData> => {
-  const response = await httpClient.get<ReservationDetailData>(
-    `/api/reservations/${reservationId}`,
-  )
+  const response = await httpClient.get<ReservationDetailData>(`/api/my/reservations/${reservationId}`)
   return response.data
 }
 
 export const cancelReservation = async (reservationId: string): Promise<Reservation> => {
   const response = await httpClient.post<Record<string, never>, Reservation>(
-    `/api/reservations/${reservationId}/cancel`,
+    `/api/my/reservations/${reservationId}/cancel`,
     {},
   )
   return response.data

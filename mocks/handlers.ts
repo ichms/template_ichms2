@@ -1,5 +1,10 @@
 import { delay, http, HttpResponse } from 'msw'
 import {
+  cancelMyReservationById,
+  getMyReservationDetailById,
+  listMyReservations,
+} from '@/features/my/server/mock-store'
+import {
   RESERVATION_STATUS,
   type QueueStatus,
   type QueueToken,
@@ -493,26 +498,63 @@ export const handlers = [
   http.get('/api/my/reservations', async () => {
     await delay(200)
 
-    const data = Array.from(reservations.values())
-      .sort((left, right) => right.createdAt - left.createdAt)
-      .flatMap((reservation) => {
-        const ticket = findTicket(reservation.ticketId)
+    return HttpResponse.json({
+      success: true,
+      data: listMyReservations(),
+    })
+  }),
 
-        if (ticket === undefined) {
-          return []
-        }
+  http.get('/api/my/reservations/:id', async ({ params }) => {
+    await delay(200)
 
-        return [
-          {
-            reservation,
-            ticket,
-          },
-        ]
-      })
+    const reservationId = String(params.id ?? '')
+    const reservationDetail = getMyReservationDetailById(reservationId)
+
+    if (reservationDetail === null) {
+      return HttpResponse.json(
+        {
+          success: false,
+          message: '예약을 찾을 수 없습니다.',
+        },
+        { status: 404 },
+      )
+    }
 
     return HttpResponse.json({
       success: true,
-      data,
+      data: reservationDetail,
+    })
+  }),
+
+  http.post('/api/my/reservations/:id/cancel', async ({ params }) => {
+    await delay(200)
+
+    const reservationId = String(params.id ?? '')
+    const result = cancelMyReservationById(reservationId)
+
+    if (result.kind === 'not_found') {
+      return HttpResponse.json(
+        {
+          success: false,
+          message: '예약을 찾을 수 없습니다.',
+        },
+        { status: 404 },
+      )
+    }
+
+    if (result.kind === 'not_cancelable') {
+      return HttpResponse.json(
+        {
+          success: false,
+          message: '예매 취소가 불가능한 상태입니다.',
+        },
+        { status: 400 },
+      )
+    }
+
+    return HttpResponse.json({
+      success: true,
+      data: result.reservation,
     })
   }),
 
