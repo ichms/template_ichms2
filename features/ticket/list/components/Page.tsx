@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { BlockButton } from '@/packages/ui/component/BlockButton'
+import { SearchField } from '@/packages/ui/component/SearchField'
 
 import { TicketCard } from '@/features/common/component/TicketCard'
 import { useTicketListQuery } from '@/features/ticket/list/hooks/queries'
@@ -17,6 +19,8 @@ export const TicketListPage = () => {
           <p className='text-3XL-Bold'>Available Events</p>
           <p>Browse and select an event to book tickets</p>
         </div>
+
+        {/* AI로 생성한 컴포넌트 예시 */}
         <Link
           className='rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-700 transition-colors hover:bg-neutral-100'
           href='/my'
@@ -61,6 +65,33 @@ export const TicketListPage = () => {
           })}
         </div>
       ) : null}
+
+      {/* BlockButton variants */}
+      <div className='flex flex-col gap-4 py-4'>
+        <p className='text-bodySm-SB'>Blue</p>
+        <div className='flex flex-col gap-2'>
+          <BlockButton colorType='blue'>Normal</BlockButton>
+          <BlockButton colorType='blue' disabled>
+            Disabled
+          </BlockButton>
+          <BlockButton colorType='blue' selected>
+            Selected
+          </BlockButton>
+        </div>
+
+        <p className='text-bodySm-SB'>Grey</p>
+        <div className='flex flex-col gap-2'>
+          <BlockButton colorType='grey'>Normal</BlockButton>
+          <BlockButton colorType='grey' disabled>
+            Disabled
+          </BlockButton>
+          <BlockButton colorType='grey' selected>
+            Selected
+          </BlockButton>
+        </div>
+      </div>
+      <br />
+      <SearchField placeholder='이벤트 검색' />
     </div>
   )
 }

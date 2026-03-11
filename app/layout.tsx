@@ -17,7 +17,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
       <body className='antialiased'>
         <ClientProvider>
           <div className='h-lvh w-lvw'>
-            <div className='min-h-screen bg-neutral-50 pb-12'>{children}</div>
+            <div className='bg-common-100 min-h-screen pb-12'>{children}</div>
           </div>
         </ClientProvider>
       </body>
