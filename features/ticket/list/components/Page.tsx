@@ -65,33 +65,6 @@ export const TicketListPage = () => {
           })}
         </div>
       ) : null}
-
-      {/* BlockButton variants */}
-      <div className='flex flex-col gap-4 py-4'>
-        <p className='text-bodySm-SB'>Blue</p>
-        <div className='flex flex-col gap-2'>
-          <BlockButton colorType='blue'>Normal</BlockButton>
-          <BlockButton colorType='blue' disabled>
-            Disabled
-          </BlockButton>
-          <BlockButton colorType='blue' selected>
-            Selected
-          </BlockButton>
-        </div>
-
-        <p className='text-bodySm-SB'>Grey</p>
-        <div className='flex flex-col gap-2'>
-          <BlockButton colorType='grey'>Normal</BlockButton>
-          <BlockButton colorType='grey' disabled>
-            Disabled
-          </BlockButton>
-          <BlockButton colorType='grey' selected>
-            Selected
-          </BlockButton>
-        </div>
-      </div>
-      <br />
-      <SearchField placeholder='이벤트 검색' />
     </div>
   )
 }
