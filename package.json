@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "lint:rules": "node scripts/check-query-keys.mjs",
+    "lint:rules": "node scripts/check-query-keys.mjs && node scripts/check-feature-structure.mjs && node scripts/check-shared-ownership.mjs",
     "ci:check": "pnpm lint && pnpm typecheck && pnpm lint:rules",
     "prepare": "husky"
   },

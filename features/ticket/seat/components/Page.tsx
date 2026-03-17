@@ -1,3 +1,5 @@
+'use client'
+
 import { useCallback, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
@@ -9,7 +11,7 @@ import {
 } from '@/features/common/component'
 
 import { useSetTokenId, useTokenIdValue } from '@/features/common/store/useTicketStore'
-import { useQueueStatusQuery } from '@/features/ticket/shared/hooks/queries'
+import { useQueueStatusQuery } from '@/features/ticket/queue/hooks/queries'
 import { useCreateReservationMutation } from '@/features/ticket/seat/hooks/mutations'
 import { useTicketSeatsQuery } from '@/features/ticket/seat/hooks/queries'
 import { useSeatRouteGuard } from '@/features/ticket/seat/hooks/useSeatRouteGuard'
@@ -20,6 +22,7 @@ import {
 } from '@/features/ticket/shared/type'
 import { buildErrorSearch, formatCurrency } from '@/features/ticket/shared/utils'
 import { HttpError } from '@/packages/http/client'
+import { useCleanupOnUnmount } from '@/features/common/hook/useCleanupOnUnmount'
 
 interface SeatSelectionPageProps {
   ticketId: string
@@ -49,6 +52,10 @@ export const SeatSelectionPage = ({ ticketId }: SeatSelectionPageProps) => {
   const handleExpireToken = useCallback(() => {
     setTokenId(null)
   }, [setTokenId])
+
+  useCleanupOnUnmount(() => {
+    setTokenId(null)
+  })
 
   useSeatRouteGuard({
     ticketId,
@@ -97,7 +104,6 @@ export const SeatSelectionPage = ({ ticketId }: SeatSelectionPageProps) => {
         tokenId,
       })
 
-      setTokenId(null)
       router.replace(`/ticket/${ticketId}/complete/${response.id}`)
     } catch (error) {
       if (error instanceof HttpError) {
@@ -115,15 +121,7 @@ export const SeatSelectionPage = ({ ticketId }: SeatSelectionPageProps) => {
 
       router.replace(`/error${buildErrorSearch(TICKETING_ERROR_TYPE.UNEXPECTED)}`)
     }
-  }, [
-    createReservation,
-    router,
-    selectedSeat,
-    setTokenId,
-    ticketId,
-    timeOutCallback,
-    tokenId,
-  ])
+  }, [createReservation, router, selectedSeat, ticketId, timeOutCallback, tokenId])
 
   if (tokenId === null) {
     return null

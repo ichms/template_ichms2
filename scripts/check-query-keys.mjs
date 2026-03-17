@@ -1,3 +1,10 @@
+/* 
+ 이 파일은 queryKey를 문자열/배열로 직접 쓰는 코드를 찾아 막습니다.
+ queryKey는 반드시 queryKeys.ts(factory)에서 만든 값을 사용해야 합니다.
+ 참고 문서:
+ - .agents/skills/team-rules/rules/00-governance/hard-rules.md (`HR-RQ-01`)
+ - .agents/skills/team-rules/rules/02-tanstack-query-rules.md
+ */
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 

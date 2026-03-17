@@ -15,11 +15,11 @@
 | Rule ID | Priority | Enforcement | 자동 검증 | 수동 검증 | 비고 |
 | --- | --- | --- | --- | --- | --- |
 | `HR-ARC-01` | P0 | Hard Gate | `app/*/page.tsx` 경계 린트(선택) | 라우트 책임 확인 | Thin Route 필수 |
-| `HR-ARC-02` | P0 | Hard Gate | import 제한 규칙 | `get*ForPage` 경유 확인 | app read-only 경계 |
+| `HR-ARC-02` | P0 | Hard Gate | import 제한 규칙 | app read-only 데이터 처리 위치 확인 | app read-only 경계 |
 | `HR-ARC-03` | P0 | Hard Gate | 제한적 | write/invalidate/side effect 위치 확인 | 정책성 행위 차단 |
 | `HR-IMP-01` | P0 | Hard Gate | `boundaries`/`no-restricted-imports` | 예외 사유 검토 | `packages -> features` 금지 |
 | `HR-IMP-02` | P0 | Hard Gate | `boundaries`/`no-restricted-imports` | 예외 사유 검토 | `common -> domain` 금지 |
-| `HR-IMP-03` | P0 | Hard Gate | import 제한 규칙 | app service import 목적 확인 | `get*ForPage`만 허용 |
+| `HR-IMP-03` | P0 | Hard Gate | import 제한 규칙 | 예외 승인 여부 확인 | app -> service 금지 |
 | `HR-RQ-01` | P0 | Hard Gate | custom lint/PR bot | key 정규화 확인 | queryKeys factory 강제 |
 | `HR-RQ-02` | P0 | Hard Gate | `service.ts` import 룰 | 파일 책임 확인 | React Query 훅 금지 |
 | `HR-RQ-03` | P1 | Warning | 제한적(정적 분석 보조) | mutation별 invalidate 확인 | 정적검증 한계로 Warning, `2026-06` 재평가 |
@@ -32,15 +32,21 @@
 | `HR-REACT-01` | P1 | Warning | 제한적(패턴 탐지) | 파생 상태/이벤트 분리 검토 | Effect 용도 제한 |
 | `HR-REACT-02` | P1 | Warning | `useEffect` fetch 패턴 탐지 | 서버 상태 fetch 경로 확인 | mount fetch 기본 패턴 금지 |
 | `HR-REACT-03` | P0 | Hard Gate | `react-hooks/exhaustive-deps` | disable 사유 검토 | hooks deps 비활성화 금지 |
+| `HR-ARC-04` | P0 | Hard Gate | custom script | feature 컴포넌트 배치 확인 | `Page.tsx + elements/*` 강제 |
+| `HR-ARC-05` | P0 | Hard Gate | custom script | shared 소유권 예외 검토 | shared 하위 subfeature 의존 금지 |
+| `HR-REACT-04` | P0 | Hard Gate | lint(`no-restricted-syntax`) | 예외 사유 검토 | app page `use client` 금지 |
+| `HR-REACT-05` | P0 | Hard Gate | lint(`@next/next/no-async-client-component`) | 예외 사유 검토 | async client component 금지 |
 
 ## 2) 아키텍처/경계 원문
 
 - `HR-ARC-01`: `app/*/page.tsx`는 라우트 엔트리/조합만 담당한다.
-- `HR-ARC-02`: `app/*`의 read-only 데이터 조회는 `features/domain-*/service.ts`의 공개 함수(`get*ForPage`)만 호출한다.
+- `HR-ARC-02`: `app/*`는 read-only 데이터 조회를 위해 `features/*/service.ts`를 직접 호출하지 않는다.
 - `HR-ARC-03`: `app/*`에서 write 요청(생성/수정/삭제), invalidate, 정책성 side effect를 직접 처리하지 않는다.
+- `HR-ARC-04`: feature의 `components` 디렉토리에는 `Page.tsx`만 두고, 추가 `.tsx` UI는 `components/elements/*` 아래에만 둔다.
+- `HR-ARC-05`: `features/<bounded>/shared`는 특정 subfeature의 `service.ts`, `queryKeys.ts`, `hooks/*`에 의존하지 않는다.
 - `HR-IMP-01`: `packages/* -> features/*` import 금지.
 - `HR-IMP-02`: `features/common -> features/domain-*` import 금지.
-- `HR-IMP-03`: `app/*`에서 `service.ts` import는 read-only 공개 함수(`get*ForPage`) 호출 케이스만 허용한다.
+- `HR-IMP-03`: `app/*`에서 `features/*/service.ts` import를 금지한다. 예외는 `EX-01` 승인 케이스만 허용한다.
 
 ## 3) 서버 상태/쿼리 원문
 
@@ -62,6 +68,8 @@
 - `HR-REACT-01`: `useEffect`를 파생 상태 계산/이벤트 처리 용도로 사용하지 않는다.
 - `HR-REACT-02`: mount fetch를 `useEffect` 기본 패턴으로 구현하지 않는다.
 - `HR-REACT-03`: `react-hooks/exhaustive-deps` 비활성화 금지.
+- `HR-REACT-04`: `app/*/page.tsx`에 `use client`를 붙이지 않는다.
+- `HR-REACT-05`: Client Component를 `async` 함수로 선언하지 않는다.
 
 ## 6) 예외 처리
 

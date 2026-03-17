@@ -2,13 +2,14 @@
 
 - Priority: P1
 - Enforcement: Warning
-- 적용 범위: `features/domain-*`, `features/common`
+- 적용 범위: `features/domain-*`, `features/common`, `features/<bounded-context>/shared`
 
 ## MUST
 
 - 도메인 폴더가 해당 기능의 UI/API/캐시 정책을 소유한다.
 - 정책이 다르면 재사용 대신 복사 후 분기한다.
 - 공통 승격 전 `Promotion Request`를 남긴다.
+- `features/<bounded-context>/shared`는 같은 bounded context 안에서 2개 이상 subfeature가 재사용하고, 특정 subfeature의 service/query key/policy를 직접 소유하지 않는 자산만 둔다.
 
 ## MUST 검증 메타
 
@@ -24,10 +25,15 @@
   1. 2개 이상 도메인에서 동일 요구로 반복 사용
   2. 도메인 고유 용어/정책 의존 없음
   3. 공통 변경 책임 수용 가능
+- 아래 3조건을 모두 만족할 때만 bounded-context `shared`를 둔다.
+  1. 2개 이상 subfeature에서 반복 사용
+  2. 특정 subfeature의 query key/service 정책을 직접 참조하지 않음
+  3. bounded context 내부 공통 용어로 설명 가능
 
 ## MUST NOT
 
 - 재사용 가능성만으로 조기 승격하지 않는다.
+- 특정 subfeature의 service/query key를 감싼 hook를 `shared`/`common`으로 승격하지 않는다.
 
 ## Promotion Request 템플릿
 
@@ -53,6 +59,7 @@
 ## 리뷰 체크 (Yes/No)
 
 - 공통 승격 근거(2개 이상 + 정책 비의존)가 있는가?
+- `shared` 자산이 특정 subfeature 소유권을 침범하지 않는가?
 - Promotion Request가 작성되었는가?
 - 롤백 계획이 있는가?
 

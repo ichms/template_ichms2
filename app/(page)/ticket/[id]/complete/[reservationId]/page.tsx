@@ -1,4 +1,3 @@
-'use client'
 import { ReservationCompletePage } from '@/features/ticket/complete/components/Page'
 
 type ReservationCompleteRouteProps = {
