@@ -1,4 +1,4 @@
-# template_ichms2
+# 프론트 챕터 코어
 
 협업을 위한 환경설정 및 컨벤션 초안입니다.
 예시 코드는 프로젝트로 대체합니다. 
@@ -17,7 +17,7 @@ Next.js(App Router) 기반 프로젝트입니다.
   - React 19
   - TypeScript 5
   - TanStack Query 5
-  - Jotai
+  - Jotai // Jotai 철학에 맞게 사용하기 위해선 별도 운영정책이 필요해 보여, 이 부분은 협의 후 선정할 예정
   - ESLint 9
   - Tailwind CSS 4
 
